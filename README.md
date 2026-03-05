@@ -9,5 +9,6 @@ It has a minimal set of instructions for any agent (OpenAI Codex, Claude Code, e
    - Claude Code: https://code.claude.com/docs/en/overview
    - Factory.AI Droid: https://factory.ai/product/ide
    - Opencode: https://opencode.ai/
+   - Pi: https://pi.dev/
 2. Clone and open this repository.
 3. Start your coding agent and prompt it with "Help me get started!"
