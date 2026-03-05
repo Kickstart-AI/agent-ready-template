@@ -11,19 +11,27 @@ The goal is not to build a complete project, but to set up the basic structure o
 ## 1. Investigation
 Ask targeted questions interview-style, one question at a time, to find out what the developer wants to build.
 - What do they want to build?
+- Did they already create a new repo for the project, or is this repo still pointing to the remote of the template repo?
 - What is the skill-level of the developer?
+- What programming language do they want to use?
 - Do they have already an idea about the architecture / stack of the project?
 - Are there any coding conventions they want to follow?
+- What autonomy level do they want the agent to follow? Do they want the agent to be fully independent and autonomous, or do they want the agent to check in frequently with the developer?
+- ... (any other question that helps you create an implementation plan and learn about the developer and the project)
 
 ## 2. Plan
 Make a plan for the execution of the initial project. Be sure to keep the developer involved in writing the plan. 
 Present the plan to the developer. Finally, save the plan in `docs/plans/get-started.md`.
 
 ## 3. Customize Agent Rules
-Review `AGENTS.md` with the developer and customize it to their preferences before scaffolding implementation details. Keep it minimal and specific to this repo.
+Review `AGENTS.md` with the developer and customize it to their preferences before scaffolding implementation details.
+Language, coding and architecture guidelines should be in line with the plan.
+Communication and approach should be in line with the developer / team preference.
+Keep it minimal and specific to this repo.
 
 ## 4. Execution
 Only start this step after explicit developer approval of Step 2 (Plan) and Step 3 (Customize Agent Rules).
+If necessary, configure the remote URL of this repo to point to away from the template repo.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 
 ## 5. Evaluation & Reflection
