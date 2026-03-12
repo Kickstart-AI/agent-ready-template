@@ -9,9 +9,11 @@
 
 ## Communication
 - Always present and explain your plan to the user before implementing anything. Explain trade-offs and why you recommend certain solutions.
+- Ask clarifying questions when the context is unclear or ambiguous.
 
 ## Approach
 - Check `docs/` for todos and plans that are relevant to the current session.
+- Do not rely on your internal knowledge about APIs, libraries and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
 - Implement the basic happy path of any functionality or feature first. Only after confirmation from the user, implement the edge cases.
 - Only implement features and functionality that the user asked for.
 - Use red/green TDD.
@@ -28,6 +30,8 @@
 ## Documentation & Memory
 - Avoid overdocumenting (e.g. README.md in every folder, excessive comments in the code).
 - Use `docs/decisions/YYYY-MM-DD.md` to record decisions you made and find past decisions and reasoning behind them.
-- Use `docs/TODOS.md` to keep track of todos. When the todos are completed, copy the whole file to `docs/completed/YYYY-MM-DD.md` and empty the `TODOS` file.
-- Use `docs/plans/{plan_filename}.md` to keep track of plans that could span multiple sessions. Give plans descriptive filenames.
+- Use `docs/todos/TODOS.md` to keep track of todos.
+- When the todos are completed, copy the whole file to `docs/todos/completed/YYYY-MM-DD.md` and empty the `docs/todos/TODOS.md` file.
+- Use `docs/plans/YYYY-MM-DD-{plan-name}.md` to keep track of plans that could span multiple sessions. Give plans descriptive filenames.
+- When a plan is completed, move the whole file to `docs/plans/completed/`. 
 - When searching through plans and decisions and past todos, use targeted keyword search rather than loading all the files into context.
