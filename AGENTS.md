@@ -29,9 +29,11 @@
 
 ## Documentation & Memory
 - Avoid overdocumenting (e.g. README.md in every folder, excessive comments in the code).
-- Use `docs/decisions/YYYY-MM-DD.md` to record decisions you made and find past decisions and reasoning behind them.
-- Use `docs/todos/TODOS.md` to keep track of todos.
-- When the todos are completed, copy the whole file to `docs/todos/completed/YYYY-MM-DD.md` and empty the `docs/todos/TODOS.md` file.
 - Use `docs/plans/YYYY-MM-DD-{plan-name}.md` to keep track of plans that could span multiple sessions. Give plans descriptive filenames.
 - When a plan is completed, move the whole file to `docs/plans/completed/`. 
+- Use `docs/decisions/YYYY-MM-DD.md` to record decisions you made and find past decisions and reasoning behind them.
+- Use `docs/todos/TODOS.md` to keep track of todos. Before listing todos, the `TODOS.md` file should reference the active plans that produced the todos. Use markdown checkboxes to show the status:
+  - [ ] todo here
+  - [x] todo completed
+- When the todos are completed, copy the whole file to `docs/todos/completed/YYYY-MM-DD.md` and empty the `docs/todos/TODOS.md` file.
 - When searching through plans and decisions and past todos, use targeted keyword search rather than loading all the files into context.
