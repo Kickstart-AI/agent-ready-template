@@ -27,10 +27,13 @@ Update `docs/todos/TODOS.md` to reflect the current state of the project.
 - If all todos are complete, archive the file to `docs/todos/completed/YYYY-MM-DD.md` and reset `docs/todos/TODOS.md` to empty.
 
 ## 4. Update plans
-Review any active files in `docs/plans/` that are relevant to the session.
+Review the relevant plan files using the plan state folders under `docs/plans/`.
 - Update progress and next steps.
 - Keep plans aligned with reality.
+- Keep currently worked plans in `docs/plans/active/`.
+- Keep approved but not currently worked plans in `docs/plans/pending/`.
 - When a plan is fully complete, move it to `docs/plans/completed/`.
+- Move the whole file between these folders when its state changes.
 - Do not create a new plan unless the session actually introduced one.
 
 ## 5. Report status clearly

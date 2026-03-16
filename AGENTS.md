@@ -29,11 +29,14 @@
 
 ## Documentation & Memory
 - Avoid overdocumenting (e.g. README.md in every folder, excessive comments in the code).
-- Use `docs/plans/YYYY-MM-DD-{plan-name}.md` to keep track of plans that could span multiple sessions. Give plans descriptive filenames.
-- When a plan is completed, move the whole file to `docs/plans/completed/`. 
+- Keep session-spanning plans in state-specific folders:
+  - `docs/plans/active/YYYY-MM-DD-{plan-name}.md` for plans currently being worked
+  - `docs/plans/pending/YYYY-MM-DD-{plan-name}.md` for approved plans that are not currently active
+  - `docs/plans/completed/YYYY-MM-DD-{plan-name}.md` for finished plans
+- Move the whole plan file between these folders when its state changes.
 - Use `docs/decisions/YYYY-MM-DD.md` to record decisions you made and find past decisions and reasoning behind them.
-- Use `docs/todos/TODOS.md` to keep track of todos. Before listing todos, the `TODOS.md` file should reference the active plans that produced the todos: "Active plan: `YYYY-MM-DD-{plan-name}.md`". Use markdown checkboxes to show the status:
-  - [ ] todo here
+- Use `docs/todos/TODOS.md` to keep track of todos. Before listing todos, `TODOS.md` should reference the active plans that produced the todos using their path under `docs/plans/active/`, for example, "Active plan: `docs/plans/active/YYYY-MM-DD-{plan-name}.md`". Only active plans should be referenced there. Use Markdown checkboxes to show the status:
+  - [ ] pending todo
   - [x] todo completed
 - When the todos are completed, copy the whole file to `docs/todos/completed/YYYY-MM-DD.md` and empty the `docs/todos/TODOS.md` file.
 - When searching through plans and decisions and past todos, use targeted keyword search rather than loading all the files into context.

@@ -21,7 +21,7 @@ Ask targeted questions interview-style, one question at a time, to find out what
 
 ## 2. Plan
 Make a plan for the execution of the initial project. Be sure to keep the developer involved in writing the plan. 
-Present the plan to the developer. Finally, save the plan in `docs/plans/get-started.md`.
+Present the plan to the developer. Finally, save the plan in `docs/plans/active/YYYY-MM-DD-get-started.md`.
 
 ## 3. Customize Agent Rules
 Review `AGENTS.md` with the developer and customize it to their preferences before scaffolding implementation details.
@@ -42,7 +42,7 @@ Definition of done checklist:
 - Architecture/stack choice is documented.
 - Only the minimum necessary files and documents are present. Avoid overengineering / scope creep.
 - Test/lint command is defined and recorded.
-- Open TODOs can be logged in `docs/TODO.md`.
+- Open TODOs can be logged in `docs/TODOS.md`.
 - Decisions should be logged in `docs/decisions/YYYY-MM-DD.md`.
 - Open decisions or deferred items are listed explicitly.
 
