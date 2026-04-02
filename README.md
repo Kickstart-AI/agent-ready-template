@@ -32,9 +32,10 @@ A one-liner that points to `AGENTS.md`. Claude Code reads `CLAUDE.md` by default
 
 Skills are task-specific prompts that are only loaded when needed. They keep your `AGENTS.md` focused on general guidelines while letting you define detailed workflows for recurring tasks.
 
-This template ships with one skill:
+This template ships with two skills:
 
 - **`get-started`** -- An interactive skill that walks you through setting up a new project. It asks about what you want to build, your skill level, preferred stack, and coding conventions. Then it creates a plan, customizes the `AGENTS.md` to your project, and scaffolds the initial project structure. You can remove this skill once your project is set up.
+- **`wrap-up`** -- A session-closing skill that helps the agent review completed work, record meaningful decisions in `docs/decisions/`, and keep plan files and their embedded `## TODOs` sections current.
 
 The `.claude/skills` directory is a symlink to `.agents/skills/`, so Claude Code can find them too.
 
@@ -43,8 +44,8 @@ The `.claude/skills` directory is a symlink to `.agents/skills/`, so Claude Code
 A lightweight documentation structure for the agent (and you) to keep track of things across sessions:
 
 - `docs/decisions/` -- Record architectural or design decisions with date-stamped files (`YYYY-MM-DD.md`) so the agent can look up past reasoning.
-- `docs/plans/` -- Multi-session plans that describe larger pieces of work. Completed plans get moved to `docs/plans/completed/`.
-- `docs/todos/` -- A `TODOS.md` file for tracking open work. When todos are completed, they get archived to `docs/todos/completed/YYYY-MM-DD.md`.
+- `docs/plans/` -- Multi-session plans that describe larger pieces of work, organized under `active/`, `pending/`, and `completed/`.
+- `docs/plans/...` plan files also carry their own `## TODOs` sections at the bottom, so open follow-up work stays attached to the plan that produced it.
 
 This structure exists because agents don't have memory across sessions. Without these files, every new session starts from zero context about what was decided and what was done before.
 

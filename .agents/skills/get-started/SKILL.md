@@ -22,6 +22,7 @@ Ask targeted questions interview-style, one question at a time, to find out what
 ## 2. Plan
 Make a plan for the execution of the initial project. Be sure to keep the developer involved in writing the plan. 
 Present the plan to the developer. Finally, save the plan in `docs/plans/active/YYYY-MM-DD-get-started.md`.
+Keep open follow-up items in a `## TODOs` section at the bottom of that plan file using markdown checkboxes.
 
 ## 3. Customize Agent Rules
 Review `AGENTS.md` with the developer and customize it to their preferences before scaffolding implementation details.
@@ -32,6 +33,11 @@ Keep it minimal and specific to this repo.
 ## 4. Execution
 Only start this step after explicit developer approval of Step 2 (Plan) and Step 3 (Customize Agent Rules).
 If necessary, configure the remote URL of this repo to point to away from the template repo.
+Create the minimum docs structure needed by this repo if it does not exist yet:
+- `docs/plans/active/`
+- `docs/plans/pending/`
+- `docs/plans/completed/`
+- `docs/decisions/`
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 
 ## 5. Evaluation & Reflection
@@ -42,7 +48,7 @@ Definition of done checklist:
 - Architecture/stack choice is documented.
 - Only the minimum necessary files and documents are present. Avoid overengineering / scope creep.
 - Test/lint command is defined and recorded.
-- Open TODOs can be logged in `docs/TODOS.md`.
+- Open TODOs are tracked in the relevant plan file under `docs/plans/` in a `## TODOs` section.
 - Decisions should be logged in `docs/decisions/YYYY-MM-DD.md`.
 - Open decisions or deferred items are listed explicitly.
 

@@ -12,7 +12,7 @@
 - Ask clarifying questions when the context is unclear or ambiguous.
 
 ## Approach
-- Check `docs/` for todos and plans that are relevant to the current session.
+- Check `docs/` for plans and their embedded TODO sections that are relevant to the current session.
 - Do not rely on your internal knowledge about APIs, libraries and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
 - Implement the basic happy path of any functionality or feature first. Only after confirmation from the user, implement the edge cases.
 - Only implement features and functionality that the user asked for.
@@ -35,8 +35,9 @@
   - `docs/plans/completed/YYYY-MM-DD-{plan-name}.md` for finished plans
 - Move the whole plan file between these folders when its state changes.
 - Use `docs/decisions/YYYY-MM-DD.md` to record decisions you made and find past decisions and reasoning behind them.
-- Use `docs/todos/TODOS.md` to keep track of todos. Before listing todos, `TODOS.md` should reference the active plans that produced the todos using their path under `docs/plans/active/`, for example, "Active plan: `docs/plans/active/YYYY-MM-DD-{plan-name}.md`". Only active plans should be referenced there. Use Markdown checkboxes to show the status:
+- Keep TODOs at the bottom of each plan file (for example, in a `## TODOs` section). Do not use a separate TODO file.
+- Use Markdown checkboxes to show the status:
   - [ ] pending todo
   - [x] todo completed
-- When the todos are completed, copy the whole file to `docs/todos/completed/YYYY-MM-DD.md` and empty the `docs/todos/TODOS.md` file.
+- Do not remove completed TODOs from plan files; keep them for historical context.
 - When searching through plans and decisions and past todos, use targeted keyword search rather than loading all the files into context.

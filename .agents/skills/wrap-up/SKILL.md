@@ -1,6 +1,6 @@
 ---
 name: wrap-up
-description: Close out a work session by logging decisions and keeping todos and plans current.
+description: Close out a work session by logging decisions and keeping plan files (including TODOs) current.
 ---
 
 # Wrap Up
@@ -19,12 +19,14 @@ If the session introduced a meaningful product, architecture, tooling, or workfl
 - State the decision, the reasoning, and any important consequences.
 - If no meaningful decision was made, do not create a decision entry just to fill the folder.
 
-## 3. Update todos
-Update `docs/todos/TODOS.md` to reflect the current state of the project.
+## 3. Update TODOs in plans
+Update TODO sections directly in the relevant files under `docs/plans/`.
 - Use markdown checkboxes.
 - Mark completed work as done.
 - Add only real follow-up tasks that remain open.
-- If all todos are complete, archive the file to `docs/todos/completed/YYYY-MM-DD.md` and reset `docs/todos/TODOS.md` to empty.
+- Keep TODOs at the bottom of each plan file (for example, in a `## TODOs` section).
+- Do not remove completed TODOs; keep them in the plan for historical context.
+- Do not use a separate todo file.
 
 ## 4. Update plans
 Review the relevant plan files using the plan state folders under `docs/plans/`.
@@ -39,8 +41,7 @@ Review the relevant plan files using the plan state folders under `docs/plans/`.
 ## 5. Report status clearly
 Summarize the wrap-up outcome for the developer.
 - What was logged in decisions.
-- What changed in todos.
-- What changed in plans.
+- What changed in plans and their todos.
 - Any unresolved items that need attention next.
 
 ## Guardrails
