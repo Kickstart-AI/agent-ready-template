@@ -7,6 +7,24 @@
 - Each module, function and class should have a concise docstring.
 - No need for backward compatibility or forward compatibility.
 
+## Security
+
+- For high-risk operations, make sure to always stop and confirm with the user before execution. Examples:
+  - Irreversible removals like `rm -rf`
+  - Changing infrastructure like `terraform apply`
+  - Database migrations or schema changes
+  - Modifying access control, permissions, or authentication logic
+  - Running scripts that affect multiple systems or environments
+  - Publishing packages or deploying to production
+  - Using custom ad-hoc scripts to bypass any tool or environment restrictions
+- When installing or updating dependencies, verify before installation that the selected version has no known
+  supply-chain compromise reports or critical CVEs.
+- Do not install anything known or suspected to be a security risk.
+- Never hardcode secrets, API keys, passwords, or tokens in code. Use environment variables or secure vault services.
+- Do not log or expose sensitive information like credentials, PII, or authentication tokens.
+- Do not commit secrets or credentials to version control. If accidentally committed, treat as compromised and rotate
+  immediately.
+
 ## Communication
 - Always present and explain your plan to the user before implementing anything. Explain trade-offs and why you recommend certain solutions.
 - Ask clarifying questions when the context is unclear or ambiguous.
