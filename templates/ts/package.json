@@ -27,7 +27,7 @@
     "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^9.0.0",
+    "eslint": "^10.2.1",
     "husky": "^9.0.0",
     "jscpd": "^4.0.0",
     "knip": "^5.0.0",
