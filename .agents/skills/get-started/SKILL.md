@@ -38,7 +38,22 @@ Create the minimum docs structure needed by this repo if it does not exist yet:
 - `docs/plans/pending/`
 - `docs/plans/completed/`
 - `docs/decisions/`
+Handle template scaffolding based on the chosen project language:
+- If the project is **Python**:
+  - Move `templates/py/.pre-commit-config.yaml`, `templates/py/.gitignore`, and `templates/py/pyproject.toml` to the repo root.
+  - Delete `templates/ts/` and any TS-only template files.
+- If the project is **TypeScript**:
+  - Move `templates/ts/package.json`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/secretlint.config.mjs`, and `templates/ts/.husky/` to the repo root.
+  - Delete `templates/py/` and any Python-only template files.
+- If the project is **neither Python nor TypeScript**:
+  - Create equivalent starter files for the selected stack in the repo root.
+  - Remove both `templates/py/` and `templates/ts/` so only relevant files remain.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
+Before handoff, validate that the configured repo works:
+- Run the smallest relevant install/setup command for the chosen stack.
+- Run the configured lint, typecheck, test, and validation commands.
+- If a validation command fails because the project has no source files yet, either add the minimal expected placeholder source/test structure or adjust the command so a fresh scaffold passes.
+- Report each validation command and whether it passed.
 
 ## 5. Evaluation & Reflection
 Look at your work and reflect on what you did. If there were interventions from the developer, make sure to document them in `AGENTS.md` or `README.md`, to avoid making the same mistakes again.
