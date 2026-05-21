@@ -1,0 +1,31 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.pyre/
+.coverage
+coverage.xml
+htmlcov/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Editors and OS files
+.idea/
+.vscode/
+.DS_Store

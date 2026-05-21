@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "packageManager": "pnpm@10",
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "dead-code": "knip",
+    "duplicate-code": "jscpd --min-lines 8 --min-tokens 50 src",
+    "secret-scan": "secretlint \"**/*\" --maskSecrets --format stylish",
+    "validate": "pnpm lint && pnpm typecheck && pnpm dead-code && pnpm duplicate-code && pnpm secret-scan"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css,scss,html}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@secretlint/secretlint-rule-preset-recommend": "^11.0.0",
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "husky": "^9.0.0",
+    "jscpd": "^4.0.0",
+    "knip": "^5.0.0",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.0.0",
+    "secretlint": "^11.0.0",
+    "typescript-eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}
