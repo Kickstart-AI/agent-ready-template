@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/templates/py"
+    schedule:
+      interval: "semiannually"
+    cooldown:
+      default-days: 30
+
+  - package-ecosystem: "npm"
+    directory: "/templates/ts"
+    schedule:
+      interval: "semiannually"
+    cooldown:
+      default-days: 30
