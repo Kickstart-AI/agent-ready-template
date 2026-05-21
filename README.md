@@ -7,6 +7,9 @@
   - [`CLAUDE.md`](#claudemd)
   - [`.agents/skills/`](#agentsskills)
   - [`docs/`](#docs)
+  - [`templates/`](#templates)
+    - [`py/`](#py)
+    - [`ts/`](#ts)
 - [How to use this repository](#how-to-use-this-repository)
   - [As a reference](#as-a-reference)
   - [As a starting point for your own project](#as-a-starting-point-for-your-own-project)
@@ -22,7 +25,7 @@ The idea is that you clone this repo, start your coding agent, and let it help y
 
 The main instruction file for your coding agent. This is read automatically by most agents at the start of every session. It contains guidelines for coding style, communication, approach, error handling, and documentation. These are opinionated defaults that work well in practice. Review them and adjust to your preferences.
 
-See the blog post **TODO ADD LINK** for more context on why these instructions look the way they do.
+See [this blog post](https://kickstart.ai/news/agentic-engineering-best-practices-coding-agents-avoid-slop-increase-productivity) for more context on why these instructions look the way they do.
 
 ### `CLAUDE.md`
 
@@ -48,6 +51,31 @@ A lightweight documentation structure for the agent (and you) to keep track of t
 - `docs/plans/...` plan files also carry their own `## TODOs` sections at the bottom, so open follow-up work stays attached to the plan that produced it.
 
 This structure exists because agents don't have memory across sessions. Without these files, every new session starts from zero context about what was decided and what was done before.
+
+### `templates/`
+
+This folder contains starter config templates used by the `get-started` skill. They are not active until moved to the repo root.
+
+#### `py/`
+
+- `.pre-commit-config.yaml`
+- `.gitignore`
+- `pyproject.toml`
+
+Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally, and catch the common mistakes agents make: bad formatting, weak typing, dead code, large files, unused dependencies, and leaked secrets. The `uv` config waits 30 days before accepting new package releases.
+
+#### `ts/`
+
+- `package.json`
+- `.gitignore`
+- `tsconfig.json`
+- `eslint.config.mjs`
+- `secretlint.config.mjs`
+- `.husky/pre-commit`
+- `.husky/pre-push`
+- `.husky/_/husky.sh`
+
+Use this set for TypeScript projects. It uses Husky and lint-staged because that is the normal workflow in TS repos, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets.
 
 ## How to use this repository
 
