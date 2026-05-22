@@ -6,6 +6,10 @@ updates:
       interval: "semiannually"
     cooldown:
       default-days: 30
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/templates/ts"
@@ -13,3 +17,7 @@ updates:
       interval: "semiannually"
     cooldown:
       default-days: 30
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
