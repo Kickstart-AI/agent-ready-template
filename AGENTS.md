@@ -8,7 +8,6 @@
 - No need for backward compatibility or forward compatibility.
 
 ## Security
-
 - For high-risk operations, make sure to always stop and confirm with the user before execution. Examples:
   - Irreversible removals like `rm -rf`
   - Changing infrastructure like `terraform apply`
@@ -19,6 +18,7 @@
   - Using custom ad-hoc scripts to bypass any tool or environment restrictions
 - When installing or updating dependencies, verify before installation that the selected version has no known
   supply-chain compromise reports or critical CVEs.
+- Always pin dependencies to exact versions in manifests or lockfiles instead of using floating version ranges.
 - Do not install anything known or suspected to be a security risk.
 - Never hardcode secrets, API keys, passwords, or tokens in code. Use environment variables or secure vault services.
 - Do not log or expose sensitive information like credentials, PII, or authentication tokens.
