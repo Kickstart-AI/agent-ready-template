@@ -47,10 +47,10 @@ repos:
         language: system
         pass_filenames: false
 
-      # duplicate_code_detection -> pylint similarities checker
-      - id: duplicate-code
-        name: Pylint duplicate code
-        entry: uvx pylint --disable=all --enable=duplicate-code --min-similarity-lines=8 .
+      # duplicate_code_detection + file_size + function_size -> pylint checks
+      - id: pylint-quality
+        name: Pylint quality checks
+        entry: uvx pylint --disable=all --enable=duplicate-code,too-many-lines,too-many-statements --min-similarity-lines=8 --max-module-lines=500 --max-statements=50 .
         language: system
         pass_filenames: false
 

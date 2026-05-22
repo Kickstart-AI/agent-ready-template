@@ -4,11 +4,14 @@ target-version = "py311"
 extend-exclude = [".venv", "venv", "build", "dist"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "C90", "TD", "FIX", "RUF"]
+select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "C90", "PLR0915", "TD", "FIX", "RUF", "TID252"]
 ignore = []
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-statements = 50
 
 [tool.ruff.format]
 quote-style = "double"
