@@ -4,7 +4,7 @@
 - Simple functions, proper abstraction. Keep functions short. Code should be self-explanatory. Repository folder structure should be self-explanatory.
 - Every line of code should have intent, and the intent should come from the user instructions.
 - Maintain clear mapping between source filenames and corresponding `test_*` filenames.
-- Each module, function and class should have a concise docstring.
+- Each module, function, and class should have a concise docstring.
 - No need for backward compatibility or forward compatibility.
 
 ## Security
@@ -26,12 +26,13 @@
   immediately.
 
 ## Communication
+- Be professional and concise but do communicate in full sentences. Avoid acknowledgements ("Got it!", "You are right!"), banter, and small talk.
 - Always present and explain your plan to the user before implementing anything. Explain trade-offs and why you recommend certain solutions.
 - Ask clarifying questions when the context is unclear or ambiguous.
 
 ## Approach
 - Check `docs/` for plans and their embedded TODO sections that are relevant to the current session.
-- Do not rely on your internal knowledge about APIs, libraries and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
+- Do not rely on your internal knowledge about APIs, libraries, and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
 - Implement the basic happy path of any functionality or feature first. Only after confirmation from the user, implement the edge cases.
 - Only implement features and functionality that the user asked for.
 - Use red/green TDD.
