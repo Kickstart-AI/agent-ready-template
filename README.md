@@ -1,7 +1,9 @@
 # Agent-ready project template
 
 ## Table of contents
-
+- [How to use this repository](#how-to-use-this-repository)
+  - [As a reference](#as-a-reference)
+  - [As a starting point for your own project](#as-a-starting-point-for-your-own-project)
 - [Content](#content)
   - [`AGENTS.md`](#agentsmd)
   - [`CLAUDE.md`](#claudemd)
@@ -10,14 +12,31 @@
   - [`templates/`](#templates)
     - [`py/`](#py)
     - [`ts/`](#ts)
-- [How to use this repository](#how-to-use-this-repository)
-  - [As a reference](#as-a-reference)
-  - [As a starting point for your own project](#as-a-starting-point-for-your-own-project)
 
 This is a template repository for **any type of project** that you want to build using coding agents.
 It contains a minimal set of agent instructions and a project structure that works well with agents like OpenAI Codex, Claude Code, Factory Droid, and others.
 
 The idea is that you clone this repo, start your coding agent, and let it help you set up the rest.
+
+## How to use this repository
+
+### As a reference
+
+Browse the `AGENTS.md`, the skill files and templates to see how agent instructions are structured. Copy whatever is useful into your own projects.
+
+### As a starting point for your own project
+
+1. Install the coding agent of your choice.
+   - OpenAI Codex: https://openai.com/codex/
+   - Claude Code: https://code.claude.com/docs/en/overview
+   - Factory.AI Droid: https://factory.ai/product/ide
+   - Opencode: https://opencode.ai/
+   - Pi: https://pi.dev/
+   - Aider: https://aider.chat/
+2. Clone this repository and open it in your terminal.
+3. Start your coding agent and prompt it with **"Help me get started!"**
+
+The `get-started` skill will kick in and guide you through setting up your project interactively.
 
 ## Content
 
@@ -56,13 +75,17 @@ This structure exists because agents don't have memory across sessions. Without 
 
 This folder contains starter config templates used by the `get-started` skill. They are not active until moved to the repo root.
 
+They contain code quality checks with reasonable defaults to catch the common mistakes agents make: bad formatting, weak typing, dead code, large files, unused dependencies, and leaked secrets.
+
+It is inspired by the concept of "Agent Readiness" by Factory.AI: https://factory.ai/news/agent-readiness
+
 #### `py/`
 
 - `.pre-commit-config.yaml`
 - `.gitignore`
 - `pyproject.toml`
 
-Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally, and catch the common mistakes agents make: bad formatting, weak typing, dead code, large files, unused dependencies, and leaked secrets. The `uv` config waits 30 days before accepting new package releases.
+Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases.
 
 #### `ts/`
 
@@ -75,24 +98,4 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged because that is the normal workflow in TS repos, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets.
-
-## How to use this repository
-
-### As a reference
-
-Browse the `AGENTS.md` and the skill files to see how agent instructions are structured. Copy whatever is useful into your own projects.
-
-### As a starting point for your own project
-
-1. Install the coding agent of your choice.
-   - OpenAI Codex: https://openai.com/codex/
-   - Claude Code: https://code.claude.com/docs/en/overview
-   - Factory.AI Droid: https://factory.ai/product/ide
-   - Opencode: https://opencode.ai/
-   - Pi: https://pi.dev/
-   - Aider: https://aider.chat/
-2. Clone this repository and open it in your terminal.
-3. Start your coding agent and prompt it with **"Help me get started!"**
-
-The `get-started` skill will kick in and guide you through setting up your project interactively.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets.
