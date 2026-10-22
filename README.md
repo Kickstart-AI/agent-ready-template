@@ -85,7 +85,7 @@ It is inspired by the concept of "Agent Readiness" by Factory.AI: https://factor
 - `.gitignore`
 - `pyproject.toml`
 
-Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and requires uv 0.13.4 or later, which no longer trusts the compromised eMudhra/emSign CA certificates. `certifi` is exempt from the 30-day wait, so CA certificate fixes install immediately. To let another urgent security fix through, add the package to `exclude-newer-package`.
+Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, is exempt from the 30-day wait, so certificate revocations install immediately. To let another urgent security fix through, add the package to `exclude-newer-package`.
 
 #### `ts/`
 
@@ -101,4 +101,4 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All dependencies, and pnpm itself, are pinned to exact versions. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` requires Node.js 26.12.1 or later, which includes the October 2026 security fixes, and both package managers refuse to install on an older version.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All dependencies, and pnpm itself, are pinned to exact versions. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` sets a minimum Node.js version (`engines.node`) that blocks releases with known vulnerabilities, and both package managers refuse to install on an older version. Raise it when Node.js publishes a security release.
