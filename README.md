@@ -95,7 +95,8 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.gitignore`
 - `tsconfig.json`
 - `eslint.config.mjs`
-- `secretlint.config.mjs`
+- `.secretlintrc.json`
+- `.prettierignore`
 - `.husky/pre-commit`
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
