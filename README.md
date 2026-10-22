@@ -90,6 +90,7 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 #### `ts/`
 
 - `package.json`
+- `.npmrc`
 - `.gitignore`
 - `tsconfig.json`
 - `eslint.config.mjs`
@@ -98,4 +99,4 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. The `.npmrc` config waits 30 days before accepting new package releases.

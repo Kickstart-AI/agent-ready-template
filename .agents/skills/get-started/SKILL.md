@@ -43,7 +43,7 @@ Handle template scaffolding based on the chosen project language:
   - Move `templates/py/.pre-commit-config.yaml`, `templates/py/.gitignore`, and `templates/py/pyproject.toml` to the repo root.
   - Delete `templates/ts/` and any TS-only template files.
 - If the project is **TypeScript**:
-  - Move `templates/ts/package.json`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/secretlint.config.mjs`, and `templates/ts/.husky/` to the repo root.
+  - Move `templates/ts/package.json`, `templates/ts/.npmrc`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/secretlint.config.mjs`, and `templates/ts/.husky/` to the repo root.
   - Delete `templates/py/` and any Python-only template files.
 - If the project is **neither Python nor TypeScript**:
   - Create equivalent starter files for the selected stack in the repo root.
