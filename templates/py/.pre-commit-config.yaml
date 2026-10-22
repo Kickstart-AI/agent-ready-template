@@ -7,7 +7,7 @@ minimum_pre_commit_version: "4.0.0"
 repos:
   # Generic repository hygiene (includes large file detection).
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=500"]
