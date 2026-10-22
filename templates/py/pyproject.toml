@@ -31,4 +31,6 @@ exclude = [".venv", "venv", "build", "dist"]
 respect-type-ignore-comments = true
 
 [tool.uv]
+required-version = ">=0.13.4"
 exclude-newer = "30 days"
+exclude-newer-package = { certifi = false }
