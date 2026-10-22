@@ -91,6 +91,7 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 
 - `package.json`
 - `.npmrc`
+- `pnpm-workspace.yaml`
 - `.gitignore`
 - `tsconfig.json`
 - `eslint.config.mjs`
@@ -99,4 +100,4 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. The `.npmrc` config waits 30 days before accepting new package releases.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. `package.json` requires Node.js 26.12.1 or later, which includes the October 2026 security fixes, and both package managers refuse to install on an older version.
