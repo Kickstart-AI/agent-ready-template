@@ -48,6 +48,7 @@ Handle template scaffolding based on the chosen project language:
 - If the project is **neither Python nor TypeScript**:
   - Create equivalent starter files for the selected stack in the repo root.
   - Remove both `templates/py/` and `templates/ts/` so only relevant files remain.
+- In `.github/dependabot.yml`, keep only the entry for the chosen stack and set its `directory` to `/`. For other stacks, replace the entries with one for the stack's package ecosystem.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 Before handoff, validate that the configured repo works:
 - Run the smallest relevant install/setup command for the chosen stack.
