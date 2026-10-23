@@ -85,17 +85,20 @@ It is inspired by the concept of "Agent Readiness" by Factory.AI: https://factor
 - `.gitignore`
 - `pyproject.toml`
 
-Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases.
+Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, is exempt from the 30-day wait, so certificate revocations install immediately. To let another urgent security fix through, add the package to `exclude-newer-package`.
 
 #### `ts/`
 
 - `package.json`
+- `.npmrc`
+- `pnpm-workspace.yaml`
 - `.gitignore`
 - `tsconfig.json`
 - `eslint.config.mjs`
-- `secretlint.config.mjs`
+- `.secretlintrc.json`
+- `.prettierignore`
 - `.husky/pre-commit`
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All direct dependencies, and pnpm itself, are pinned to exact versions. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` sets a patched minimum version for each supported Node.js line (`engines.node`), and both package managers refuse to install on an older version. Raise these minimums when Node.js publishes a security release. In CI, set `check-latest: true` on `actions/setup-node`, because runner images can lag behind a security release.

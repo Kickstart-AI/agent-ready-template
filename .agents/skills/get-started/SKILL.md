@@ -43,11 +43,12 @@ Handle template scaffolding based on the chosen project language:
   - Move `templates/py/.pre-commit-config.yaml`, `templates/py/.gitignore`, and `templates/py/pyproject.toml` to the repo root.
   - Delete `templates/ts/` and any TS-only template files.
 - If the project is **TypeScript**:
-  - Move `templates/ts/package.json`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/secretlint.config.mjs`, and `templates/ts/.husky/` to the repo root.
+  - Move `templates/ts/package.json`, `templates/ts/.npmrc`, `templates/ts/pnpm-workspace.yaml`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/.secretlintrc.json`, `templates/ts/.prettierignore`, and `templates/ts/.husky/` to the repo root.
   - Delete `templates/py/` and any Python-only template files.
 - If the project is **neither Python nor TypeScript**:
   - Create equivalent starter files for the selected stack in the repo root.
   - Remove both `templates/py/` and `templates/ts/` so only relevant files remain.
+- In `.github/dependabot.yml`, keep only the entry for the chosen stack and set its `directory` to `/`. For other stacks, replace the entries with one for the stack's package ecosystem.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 Before handoff, validate that the configured repo works:
 - Run the smallest relevant install/setup command for the chosen stack.
