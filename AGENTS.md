@@ -20,7 +20,8 @@
   supply-chain compromise reports or critical CVEs.
 - Always pin dependencies to exact versions in manifests or lockfiles instead of using floating version ranges.
 - Only exempt a package from the release-age delay (`exclude-newer-package`, `min-release-age-exclude`, `minimumReleaseAgeExclude`)
-  to install a security fix. Remove the exemption once the fixed version is older than the delay.
+  to install a security fix. Remove the exemption once the fixed version is older than the delay. Permanent settings
+  that have a comment saying so (for example the `certifi` delay in `pyproject.toml`) stay.
 - Do not install anything known or suspected to be a security risk.
 - Never hardcode secrets, API keys, passwords, or tokens in code. Use environment variables or secure vault services.
 - Do not log or expose sensitive information like credentials, PII, or authentication tokens.
@@ -34,7 +35,7 @@
 
 ## Approach
 - Check `docs/` for plans and their embedded TODO sections that are relevant to the current session.
-- At the start of a session, check the release-age exemptions. If an exempted fixed version is now older than the delay, remove the exemption.
+- At the start of a session, check the temporary release-age exemptions. If an exempted fixed version is now older than the delay, remove the exemption.
 - Do not rely on your internal knowledge about APIs, libraries, and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
 - Implement the basic happy path of any functionality or feature first. Only after confirmation from the user, implement the edge cases.
 - Only implement features and functionality that the user asked for.
