@@ -8,7 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 Pull request: [#8](https://github.com/Kickstart-AI/agent-ready-template/pull/8)
 
 ### Added
-- A GitHub workflow (`.github/workflows/pre-commit.yml`) that runs the Python and TypeScript template checks.
+- A GitHub workflow (`.github/workflows/validate.yml`) that runs the Python and TypeScript template checks.
 - A version in `templates/py/pyproject.toml` and `templates/ts/package.json`, and this changelog.
 - A 30-day release delay for npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`). This matches the `uv` delay.
 - Minimum versions for Node.js (`engines.node`) and `uv` (`required-version`) that block releases with known vulnerabilities.
