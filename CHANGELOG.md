@@ -3,9 +3,16 @@
 All notable changes to this project are recorded in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2026-10-27
 
 Pull request: [#8](https://github.com/Kickstart-AI/agent-ready-template/pull/8)
+
+This release protects the templates against recent vulnerabilities and supply-chain attacks. It blocks tool versions with known vulnerabilities, delays new package releases, and pins all dependencies.
+
+### Security
+- Require patched Node.js versions. See the [Node.js October 2026 security releases](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
+- Require a `uv` version that does not trust the compromised eMudhra/emSign CA certificates. See the [Python announcement on the eMudhra/emSign CA certificate incident](https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576).
+- Remove the `braces` vulnerability ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)) from the TypeScript template tools.
 
 ### Added
 - A GitHub workflow (`.github/workflows/validate.yml`) that runs the Python and TypeScript template checks.
