@@ -20,7 +20,7 @@ Ask targeted questions interview-style, one question at a time, to find out what
 - ... (any other question that helps you create an implementation plan and learn about the developer and the project)
 
 ## 2. Plan
-Make a plan for the execution of the initial project. Be sure to keep the developer involved in writing the plan. 
+Make a plan for the execution of the initial project. Be sure to keep the developer involved in writing the plan.
 Present the plan to the developer. Finally, save the plan in `docs/plans/active/YYYY-MM-DD-get-started.md`.
 Keep open follow-up items in a `## TODOs` section at the bottom of that plan file using markdown checkboxes.
 
@@ -48,6 +48,8 @@ Handle template scaffolding based on the chosen project language:
 - If the project is **neither Python nor TypeScript**:
   - Create equivalent starter files for the selected stack in the repo root.
   - Remove both `templates/py/` and `templates/ts/` so only relevant files remain.
+- In `pyproject.toml` or `package.json`, set the project `name` and reset `version` to `0.1.0`. Replace `CHANGELOG.md` with an empty one for the new project.
+- In `.github/workflows/pre-commit.yml`, keep only the job for the chosen stack and adapt it to the project: run it from the repo root, remove the template-only steps and settings (the placeholder source file and the `SKIP: deptry` setting), and use `pnpm install --frozen-lockfile` once a lockfile exists. For other stacks, replace the jobs with ones that run the stack's checks.
 - In `.github/dependabot.yml`, keep only the entry for the chosen stack and set its `directory` to `/`. For other stacks, replace the entries with one for the stack's package ecosystem.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 Before handoff, validate that the configured repo works:

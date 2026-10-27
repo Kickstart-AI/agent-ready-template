@@ -1,0 +1,48 @@
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          working-directory: templates/py
+      # deptry needs a [project] section, which only exists after get-started.
+      - run: uvx pre-commit@4.6.2 run --all-files --show-diff-on-failure --config templates/py/.pre-commit-config.yaml
+        env:
+          SKIP: deptry
+
+  typescript:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: templates/ts
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          package_json_file: templates/ts/package.json
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+          check-latest: true
+      - run: pnpm install
+      # The template has no source files; add one so tsc and knip have input.
+      - run: |
+          mkdir -p src
+          printf '/** Add two numbers. */\nexport function add(a: number, b: number): number {\n  return a + b;\n}\n' > src/index.ts
+      - run: pnpm validate
+      - run: pnpm format:check
