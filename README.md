@@ -85,7 +85,7 @@ It is inspired by the concept of "Agent Readiness" by Factory.AI: https://factor
 - `.gitignore`
 - `pyproject.toml`
 
-Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, is exempt from the 30-day wait, so certificate revocations install immediately. To let another urgent security fix through, add the package to `exclude-newer-package`.
+Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, has a short permanent delay of 2 days instead, so certificate revocations install quickly. To let another urgent security fix through, add the package to `exclude-newer-package`.
 
 #### `ts/`
 
