@@ -34,6 +34,7 @@
 
 ## Approach
 - Check `docs/` for plans and their embedded TODO sections that are relevant to the current session.
+- At the start of a session, check the release-age exemptions. If an exempted fixed version is now older than the delay, remove the exemption.
 - Do not rely on your internal knowledge about APIs, libraries, and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
 - Implement the basic happy path of any functionality or feature first. Only after confirmation from the user, implement the edge cases.
 - Only implement features and functionality that the user asked for.
