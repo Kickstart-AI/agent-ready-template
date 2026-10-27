@@ -12,6 +12,7 @@ This release protects the templates against recent vulnerabilities and supply-ch
 ### Security
 - Require patched Node.js versions. See the [Node.js October 2026 security releases](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
 - Require a `uv` version that does not trust the compromised eMudhra/emSign CA certificates. See the [Python announcement on the eMudhra/emSign CA certificate incident](https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576).
+- Exempt the patched `zod` 4.6.6 ([GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5)) and `fast-uri` 3.1.9 ([GHSA-w74x-v6f9-j3xg](https://github.com/advisories/GHSA-w74x-v6f9-j3xg)) from the 30-day release delay in the TypeScript template.
 - Remove the `braces` vulnerability ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)) from the TypeScript template tools.
 
 ### Added
