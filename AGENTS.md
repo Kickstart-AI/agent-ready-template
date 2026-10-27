@@ -48,6 +48,8 @@
 
 ## Documentation & Memory
 - Avoid overdocumenting (e.g. README.md in every folder, excessive comments in the code).
+- Keep `CHANGELOG.md` up to date. Record each user-visible change under the next version, in the same change that makes it.
+  When you release a version, update the version in `pyproject.toml` or `package.json` to match.
 - Keep session-spanning plans in state-specific folders:
   - `docs/plans/active/YYYY-MM-DD-{plan-name}.md` for plans currently being worked
   - `docs/plans/pending/YYYY-MM-DD-{plan-name}.md` for approved plans that are not currently active

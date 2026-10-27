@@ -1,5 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
+  "name": "agent-ready-template",
+  "version": "0.2.0",
   "packageManager": "pnpm@12.5.1",
   "engines": {
     "node": "^24.22.1 || >=26.12.1"
