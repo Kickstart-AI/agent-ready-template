@@ -19,6 +19,8 @@
 - When installing or updating dependencies, verify before installation that the selected version has no known
   supply-chain compromise reports or critical CVEs.
 - Always pin dependencies to exact versions in manifests or lockfiles instead of using floating version ranges.
+- Only exempt a package from the release-age delay (`exclude-newer-package`, `min-release-age-exclude`, `minimumReleaseAgeExclude`)
+  to install a security fix. Remove the exemption once the fixed version is older than the delay.
 - Do not install anything known or suspected to be a security risk.
 - Never hardcode secrets, API keys, passwords, or tokens in code. Use environment variables or secure vault services.
 - Do not log or expose sensitive information like credentials, PII, or authentication tokens.
