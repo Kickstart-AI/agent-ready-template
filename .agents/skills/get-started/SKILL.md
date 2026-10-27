@@ -49,7 +49,7 @@ Handle template scaffolding based on the chosen project language:
   - Create equivalent starter files for the selected stack in the repo root.
   - Remove both `templates/py/` and `templates/ts/` so only relevant files remain.
 - In `pyproject.toml` or `package.json`, set the project `name` and reset `version` to `0.1.0`. Replace `CHANGELOG.md` with an empty one for the new project.
-- In `.github/workflows/pre-commit.yml`, keep only the job for the chosen stack and adapt it to the project: run it from the repo root, remove the template-only steps and settings (the placeholder source file and the `SKIP: deptry` setting), and use `pnpm install --frozen-lockfile` once a lockfile exists. For other stacks, replace the jobs with ones that run the stack's checks.
+- In `.github/workflows/validate.yml`, keep only the job for the chosen stack and the `validate` job, update the `needs` list of `validate`, and adapt the stack job to the project: run it from the repo root, remove the template-only steps and settings (the placeholder source file and the `SKIP: deptry` setting), and use `pnpm install --frozen-lockfile` once a lockfile exists. For other stacks, replace the jobs with ones that run the stack's checks.
 - In `.github/dependabot.yml`, keep only the entry for the chosen stack and set its `directory` to `/`. For other stacks, replace the entries with one for the stack's package ecosystem.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 Before handoff, validate that the configured repo works:
