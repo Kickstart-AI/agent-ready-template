@@ -58,7 +58,7 @@ Claude Code checks permission rules in this order, and the first match wins:
 2. **`ask`**: Claude Code always asks you, also in auto mode. The auto mode classifier cannot approve these commands.
 3. **`allow`**: Claude Code runs the command without asking.
 
-Other commands follow the permission mode. In manual mode Claude Code asks you. In auto mode a classifier decides.
+Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Because the sandbox is enabled, other Bash commands also run without asking, but only inside the sandbox. File edits and commands outside the sandbox follow the mode: in manual mode Claude Code asks you, and in auto mode a classifier decides.
 
 Put personal overrides in `.claude/settings.local.json`. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
 
@@ -66,10 +66,11 @@ Put personal overrides in `.claude/settings.local.json`. These cannot override a
 
 **The sandbox is the security boundary.** With `sandbox.enabled`, the operating system limits every Bash command, whatever its text:
 
-- Commands can write only inside the project.
+- Commands can write only inside the project and temporary directories.
 - Commands cannot read the paths in the `Read` deny rules.
-- Each new network host needs your approval.
+- Each new network host needs approval: from you in manual mode, or from the classifier in auto mode.
 - `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
+- The only exception is the read-only Codex review command. See [Using Claude and Codex together](#using-claude-and-codex-together).
 
 The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edit`) use the `Read` and `Edit` rules instead. For more information, see the [permissions](https://code.claude.com/docs/en/permissions) and [sandboxing](https://code.claude.com/docs/en/sandboxing) documentation.
 
@@ -129,7 +130,7 @@ You can use one agent to review the work of the other. The two directions work d
   codex exec -m gpt-6-astra -s read-only -- "Follow the review instructions in prompt.md."
   ```
 
-  Use exactly this form. A redirect (such as `< /dev/null` or `> review.txt`) or a command substitution (`$(...)`) keeps the command in the sandbox, and Codex fails. Use `-o review.txt` to save the output. A prompt that contains ` -c `, ` -p `, or "danger" is denied, so put long prompts in a file.
+  Use exactly this form. A redirect (such as `< /dev/null` or `> review.txt`) or a command substitution (`$(...)`) keeps the command in the sandbox, and Codex fails. Outside the Claude sandbox, the Claude `Read` deny rules do not apply, so only the Codex settings limit what Codex can read. Claude reads the review from the command output. The `-o` flag is denied, because Codex would write that file outside its sandbox. A prompt that contains ` -c `, ` -o `, ` -p `, or "danger" is denied, so put long prompts in a file.
 
 ### `.agents/skills/`
 
