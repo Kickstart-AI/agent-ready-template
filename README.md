@@ -115,28 +115,15 @@ You can use one agent to review the work of the other. The two directions work d
   claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 -- "Review the relevant files and report findings."
   ```
 
-  The rule allows `--model claude-opus-5-5` in this position, or no `--model` option to use the default model. Other model values or flag arrangements need separate approval.
+  The rule allows `--model claude-opus-5-5` in this position, or no `--model` option to use the default model. Other model values or flag arrangements do not match this exception. Running them outside the sandbox requires separate approval. With **Approve for me**, the automatic reviewer can approve them without asking you.
+
+  **The allow rules do not enforce these restrictions on every Claude invocation.** They only pre-approve the exact forms above. Other invocations can reach the reviewer, including commands with weaker permissions. Automatic review is not a guarantee that these commands will be rejected.
+
+  Codex prefix rules support neither regex nor wildcard argument matching. A deny rule for `claude --dangerously-skip-permissions` would miss the same flag after other arguments. We therefore do not add rules that depend on the position of individual unsafe flags. Use the documented review command; outside that form, safety depends on the active sandbox and reviewer. See the [Codex rule syntax](https://learn.chatgpt.com/docs/agent-configuration/rules#understand-rule-fields).
 
   Claude can read and search, but has no shell or editing tools. Safe mode disables hooks, plugins, skills, and automatic `CLAUDE.md` loading; managed policy still applies. Supply review instructions and file paths in the prompt. Keep the final `--` so later arguments cannot change these restrictions. This is a tool restriction, not an OS read-only sandbox. See the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference).
 
-- **Claude calls Codex**: Codex must write its own state in `~/.codex` and reach the OpenAI API, so it must run outside the Claude sandbox. Codex then uses its own read-only sandbox. Add this to your user settings in `~/.claude/settings.json` and restart Claude:
-
-  ```json
-  "permissions": {
-    "deny": [
-      "Bash(codex exec *danger*)",
-      "Bash(codex exec *workspace-write*)",
-      "Bash(codex exec *--full-auto*)",
-      "Bash(codex exec * -c *)",
-      "Bash(codex exec *--config*)",
-      "Bash(codex exec * -p *)",
-      "Bash(codex exec *--profile*)"
-    ]
-  },
-  "sandbox": { "excludedCommands": ["codex exec -m * -s read-only -- *"] }
-  ```
-
-  The exception is personal, so it belongs in your user settings, not in the project. The deny rules block the flags that change the Codex sandbox, because the `*` for the model can match any text. Claude can then run:
+- **Claude calls Codex**: Codex must write its own state in `~/.codex` and reach the OpenAI API, so it must run outside the Claude sandbox. Codex then uses its own read-only sandbox. `.claude/settings.json` excludes `codex exec -m * -s read-only -- *` from the Claude sandbox. Its `codex exec` deny rules block the flags that change the Codex sandbox, because the `*` for the model can match any text. Restart Claude after you change these settings. Claude can then run:
 
   ```sh
   codex exec -m gpt-6-astra -s read-only -- "Follow the review instructions in prompt.md."
