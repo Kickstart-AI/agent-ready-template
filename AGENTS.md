@@ -44,6 +44,15 @@
 - Before handoff, run the smallest relevant tests/lint for touched code and report pass/fail explicitly.
 - Self-improvement: If the user corrects a mistake or gives feedback, suggest a change to the `AGENTS.md` to prevent the same mistake from happening again.
 
+## Testing
+- Test behavior and functionality, not implementation.
+- Use real and representative data and components. Avoid mocks and monkeypatching, except when the real component would make the tests too slow.
+- When you find a bug, first write a regression test that reproduces it, then fix it.
+- For UI changes, test manually before you ask for a review. Do not leave the testing to the reviewer.
+- For data-heavy or ML projects, prefer end-to-end and integration tests on real data. Check for data leakage.
+- Do not aim for a coverage percentage. High coverage is easy to get and does not show that the tests are useful.
+- Do not write tests that only assert configuration values.
+
 ## Error Handling & Debugging
 - No need for excessive try-except blocks and edge case handling. Don't wrap imports in try-except blocks.
 - Use `logging` or equivalent instead of `print`. Make use of `debug`, `warning` and `error` levels in addition to `info`.

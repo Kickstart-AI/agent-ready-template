@@ -3,6 +3,25 @@
 All notable changes to this project are recorded in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Add testing rules to `AGENTS.md`: behavior tests, real data instead of mocks, regression tests for bugs, manual UI tests, and end-to-end tests for data and ML projects.
+- Instruct the `get-started` skill to adapt project-type-specific rules in `AGENTS.md`.
+
+## [0.3.0] - 2026-11-13
+
+Pull request: [#9 - Add agent tool permission settings](https://github.com/Kickstart-AI/agent-ready-template/pull/9)
+
+### Security
+- Add Claude Code deny and ask rules, with the Bash sandbox enabled.
+- Add Codex workspace-write defaults with network access disabled and forbidden command rules. Commands that require human approval in Claude are blocked in Codex because Approve for me can approve `prompt` rules automatically.
+- Allow restricted Claude review invocations from Codex, with either the default model or explicit `claude-opus-5-5`.
+- Limit the Claude sandbox exception to the fixed `codex exec -m gpt-6-astra -s read-only --` review command. Keep additional deny rules for unsafe Codex flags and output files.
+
+### Changed
+- Consolidate README security and permission guidance. Explain the agents' differences, command matching limits, automatic review, and cross-agent review commands.
+
 ## [0.2.0] - 2026-10-27
 
 Pull request: [#8](https://github.com/Kickstart-AI/agent-ready-template/pull/8)
@@ -50,5 +69,6 @@ This release protects the templates against recent vulnerabilities and supply-ch
 ### Changed
 - Dependency updates from Dependabot ([#6](https://github.com/Kickstart-AI/agent-ready-template/pull/6)).
 
+[0.3.0]: https://github.com/Kickstart-AI/agent-ready-template/pull/9
 [0.2.0]: https://github.com/Kickstart-AI/agent-ready-template/pull/8
 [0.1.0]: https://github.com/Kickstart-AI/agent-ready-template/commits/main

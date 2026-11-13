@@ -4,9 +4,15 @@
 - [How to use this repository](#how-to-use-this-repository)
   - [As a reference](#as-a-reference)
   - [As a starting point for your own project](#as-a-starting-point-for-your-own-project)
+- [Security and permissions](#security-and-permissions)
+  - [Claude Code](#claude-security)
+  - [Codex](#codex-security)
 - [Content](#content)
   - [`AGENTS.md`](#agentsmd)
   - [`CLAUDE.md`](#claudemd)
+  - [`.claude/settings.json`](#claudesettingsjson)
+  - [`.codex/`](#codex)
+  - [Using Claude and Codex together](#using-claude-and-codex-together)
   - [`.agents/skills/`](#agentsskills)
   - [`docs/`](#docs)
   - [`templates/`](#templates)
@@ -15,8 +21,6 @@
 
 This is a template repository for **any type of project** that you want to build using coding agents.
 It contains a minimal set of agent instructions and a project structure that works well with agents like OpenAI Codex, Claude Code, Factory Droid, and others.
-
-The idea is that you clone this repo, start your coding agent, and let it help you set up the rest.
 
 ## How to use this repository
 
@@ -36,7 +40,51 @@ Browse the `AGENTS.md`, the skill files and templates to see how agent instructi
 2. Clone this repository and open it in your terminal.
 3. Start your coding agent and prompt it with **"Help me get started!"**
 
-The `get-started` skill will kick in and guide you through setting up your project interactively.
+The [`get-started` skill](#agentsskills) guides the project setup.
+
+## Security and permissions
+
+Instructions in `AGENTS.md` are only requests. Agents can ignore them, especially in long sessions. This template therefore also uses settings that the agent tools enforce. Each agent has its own settings file, and the rules do not transfer between agents.
+
+<a id="claude-security"></a>
+
+### Claude Code
+
+`.claude/settings.json` denies access to secrets, destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools. It requires approval for dependency installation, commits, and other commands that change local state.
+
+Claude Code checks permission rules in this order, and the first match wins:
+
+1. **`deny`**: Claude Code blocks the command. It does not ask you, in any permission mode, including auto mode. A matching `allow` rule or an earlier "Yes, and don't ask again" does not override it.
+2. **`ask`**: Claude Code always asks you, also in auto mode. The auto mode classifier cannot approve these commands.
+3. **`allow`**: Claude Code runs the command without asking.
+
+Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Because the sandbox is enabled, other Bash commands also run without asking, but only inside the sandbox. File edits and commands outside the sandbox follow the mode: in manual mode Claude Code asks you, and in auto mode a classifier decides.
+
+Put personal overrides in `.claude/settings.local.json`. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
+
+**Rules match the command text only.** `Bash(git push *)` blocks `git push origin main`, but not `git -C . push` or `bash -c 'git push'`. The rules stop the usual form of a command. They are not a security boundary.
+
+**The sandbox is the security boundary.** With `sandbox.enabled`, the operating system limits every Bash command, whatever its text:
+
+- Commands can write only inside the project and temporary directories.
+- Commands cannot read the paths in the `Read` deny rules.
+- Each new network host needs approval: from you in manual mode, or from the classifier in auto mode.
+- `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
+- The only exception is the read-only Codex review command. See [Using Claude and Codex together](#using-claude-and-codex-together).
+
+The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edit`) use the `Read` and `Edit` rules instead. For more information, see the [permissions](https://code.claude.com/docs/en/permissions) and [sandboxing](https://code.claude.com/docs/en/sandboxing) documentation.
+
+<a id="codex-security"></a>
+
+### Codex
+
+The project uses `workspace-write` so Codex can edit repository files and run commands within the sandbox. Network access is disabled by default. The rules in `.codex/rules/default.rules` block selected command prefixes, including dependency installation and updates, commits, rebases, file removal, Docker, and Terraform. See the rule file for the full list.
+
+**A `prompt` rule requires approval, but does not require a human to approve.** With **Approve for me** enabled (`approvals_reviewer = "auto_review"`), Codex sends these requests to its automatic reviewer. The reviewer can approve the command without asking you. With `approvals_reviewer = "user"`, eligible requests go to you instead. Codex has no documented per-command setting that forces human approval while Approve for me remains enabled.
+
+For this reason, this template uses `forbidden` for these commands instead of `prompt`. A matching command is blocked in both manual and automatic approval modes. Auto-review cannot approve it, and a matching `allow` rule does not override it. Run a needed blocked operation yourself in a separate terminal. The [Claude review command](#using-claude-and-codex-together) remains an explicit `allow` exception.
+
+These rules do not make all other commands safe. They match literal command prefixes, so shell wrappers, alternate executable paths, and commands run by other tools can bypass them. They do not replace the sandbox, and they do not prevent reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment. Project settings are defaults that users can override; use managed requirements for enforced restrictions. The project must be trusted for its rules to load; restart Codex after changes. See the [Codex rules](https://learn.chatgpt.com/docs/agent-configuration/rules) and [Auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
 
 ## Content
 
@@ -49,6 +97,40 @@ See [this blog post](https://kickstart.ai/news/agentic-engineering-best-practice
 ### `CLAUDE.md`
 
 A one-liner that points to `AGENTS.md`. Claude Code reads `CLAUDE.md` by default, so this redirect makes sure it picks up the same instructions as every other agent.
+
+### `.claude/settings.json`
+
+Claude Code permission rules and sandbox settings. See [Security and permissions: Claude Code](#claude-security) for the blocked operations, approval behavior, and personal overrides.
+
+### `.codex/`
+
+Codex settings in `.codex/config.toml` and command rules in `.codex/rules/default.rules`. See [Codex](#codex-security) for how the rules work.
+
+### Using Claude and Codex together
+
+You can use one agent to review the work of the other. The two directions work differently:
+
+- **Codex calls Claude**: the Codex rules allow this exact command outside the Codex sandbox:
+
+  ```sh
+  claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 -- "Review the relevant files and report findings."
+  ```
+
+  The rule allows `--model claude-opus-5-5` in this position, or no `--model` option to use the default model. Other model values or flag arrangements do not match this exception. Running them outside the sandbox requires separate approval. With **Approve for me**, the automatic reviewer can approve them without asking you.
+
+  **The allow rules do not enforce these restrictions on every Claude invocation.** They only pre-approve the exact forms above. Other invocations can reach the reviewer, including commands with weaker permissions. Automatic review is not a guarantee that these commands will be rejected.
+
+  Codex prefix rules support neither regex nor wildcard argument matching. A deny rule for `claude --dangerously-skip-permissions` would miss the same flag after other arguments. We therefore do not add rules that depend on the position of individual unsafe flags. Use the documented review command; outside that form, safety depends on the active sandbox and reviewer. See the [Codex rule syntax](https://learn.chatgpt.com/docs/agent-configuration/rules#understand-rule-fields).
+
+  Claude can read and search, but has no shell or editing tools. Safe mode disables hooks, plugins, skills, and automatic `CLAUDE.md` loading; managed policy still applies. Supply review instructions and file paths in the prompt. Keep the final `--` so later arguments cannot change these restrictions. This is a tool restriction, not an OS read-only sandbox. See the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference).
+
+- **Claude calls Codex**: Codex must write its own state in `~/.codex` and reach the OpenAI API, so it must run outside the Claude sandbox. Codex then uses its own read-only sandbox. `.claude/settings.json` excludes only `codex exec -m gpt-6-astra -s read-only -- *` from the Claude sandbox. The fixed model and sandbox flags come before `--`; only the prompt can vary. This prevents the model argument from matching extra flags. Other models or flag arrangements do not match this exception. The `codex exec` deny rules remain as an additional check, not a complete filter for every option spelling. Restart Claude after you change these settings. Claude can then run:
+
+  ```sh
+  codex exec -m gpt-6-astra -s read-only -- "Follow the review instructions in prompt.md."
+  ```
+
+  Use exactly this form. A redirect (such as `< /dev/null` or `> review.txt`) or a command substitution (`$(...)`) keeps the command in the sandbox, and Codex fails. Outside the Claude sandbox, the Claude `Read` deny rules do not apply, so only the Codex settings limit what Codex can read. Claude reads the review from the command output. The `-o` flag is denied, because Codex would write that file outside its sandbox. Option-like text in the prompt can also match the deny rules, so put long prompts in a file.
 
 ### `.agents/skills/`
 
@@ -66,8 +148,7 @@ The `.claude/skills` directory is a symlink to `.agents/skills/`, so Claude Code
 A lightweight documentation structure for the agent (and you) to keep track of things across sessions:
 
 - `docs/decisions/` -- Record architectural or design decisions with date-stamped files (`YYYY-MM-DD.md`) so the agent can look up past reasoning.
-- `docs/plans/` -- Multi-session plans that describe larger pieces of work, organized under `active/`, `pending/`, and `completed/`.
-- `docs/plans/...` plan files also carry their own `## TODOs` sections at the bottom, so open follow-up work stays attached to the plan that produced it.
+- `docs/plans/` -- Multi-session plans organized under `active/`, `pending/`, and `completed/`. Each plan keeps its follow-up work in a `## TODOs` section at the bottom.
 
 This structure exists because agents don't have memory across sessions. Without these files, every new session starts from zero context about what was decided and what was done before.
 
