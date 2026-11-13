@@ -52,7 +52,14 @@
       "Bash(scp *)",
       "Bash(nc *)",
       "Bash(printenv *)",
-      "Bash(env)"
+      "Bash(env)",
+      "Bash(codex exec *danger*)",
+      "Bash(codex exec *workspace-write*)",
+      "Bash(codex exec *--full-auto*)",
+      "Bash(codex exec * -c *)",
+      "Bash(codex exec *--config*)",
+      "Bash(codex exec * -p *)",
+      "Bash(codex exec *--profile*)"
     ],
     "ask": [
       "Bash(npm install *)",
@@ -80,6 +87,7 @@
   },
   "sandbox": {
     "enabled": true,
-    "allowUnsandboxedCommands": false
+    "allowUnsandboxedCommands": false,
+    "excludedCommands": ["codex exec -m * -s read-only -- *"]
   }
 }
