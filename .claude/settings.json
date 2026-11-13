@@ -90,6 +90,6 @@
   "sandbox": {
     "enabled": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": ["codex exec -m * -s read-only -- *"]
+    "excludedCommands": ["codex exec -m gpt-6-astra -s read-only -- *"]
   }
 }
