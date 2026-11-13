@@ -1,0 +1,90 @@
+# Rules match command prefixes; see README.md for their limits.
+prefix_rule(pattern = ["sudo"], decision = "forbidden")
+prefix_rule(pattern = ["rm", "-rf"], decision = "forbidden")
+prefix_rule(pattern = ["rm", "-fr"], decision = "forbidden")
+prefix_rule(pattern = ["git", "push"], decision = "forbidden")
+prefix_rule(pattern = ["git", "reset", "--hard"], decision = "forbidden")
+prefix_rule(pattern = ["git", "clean"], decision = "forbidden")
+prefix_rule(pattern = ["git", "filter-branch"], decision = "forbidden")
+prefix_rule(pattern = ["gh", "pr", "merge"], decision = "forbidden")
+prefix_rule(pattern = ["gh", "repo", "delete"], decision = "forbidden")
+prefix_rule(pattern = ["gh", "secret"], decision = "forbidden")
+prefix_rule(pattern = ["terraform", "apply"], decision = "forbidden")
+prefix_rule(pattern = ["terraform", "destroy"], decision = "forbidden")
+prefix_rule(pattern = ["terraform", "import"], decision = "forbidden")
+prefix_rule(pattern = ["terraform", "state"], decision = "forbidden")
+prefix_rule(pattern = ["tofu", "apply"], decision = "forbidden")
+prefix_rule(pattern = ["tofu", "destroy"], decision = "forbidden")
+prefix_rule(pattern = ["kubectl", "delete"], decision = "forbidden")
+prefix_rule(pattern = ["kubectl", "apply"], decision = "forbidden")
+prefix_rule(pattern = ["helm", "install"], decision = "forbidden")
+prefix_rule(pattern = ["helm", "upgrade"], decision = "forbidden")
+prefix_rule(pattern = ["helm", "uninstall"], decision = "forbidden")
+prefix_rule(pattern = ["aws"], decision = "forbidden")
+prefix_rule(pattern = ["gcloud"], decision = "forbidden")
+prefix_rule(pattern = ["az"], decision = "forbidden")
+prefix_rule(pattern = ["npm", "publish"], decision = "forbidden")
+prefix_rule(pattern = ["pnpm", "publish"], decision = "forbidden")
+prefix_rule(pattern = ["uv", "publish"], decision = "forbidden")
+prefix_rule(pattern = ["twine", "upload"], decision = "forbidden")
+prefix_rule(pattern = ["curl"], decision = "forbidden")
+prefix_rule(pattern = ["wget"], decision = "forbidden")
+prefix_rule(pattern = ["ssh"], decision = "forbidden")
+prefix_rule(pattern = ["scp"], decision = "forbidden")
+prefix_rule(pattern = ["nc"], decision = "forbidden")
+prefix_rule(pattern = ["printenv"], decision = "forbidden")
+prefix_rule(pattern = ["env"], decision = "forbidden")
+prefix_rule(pattern = ["npm", "install"], decision = "forbidden")
+prefix_rule(pattern = ["npm", "i"], decision = "forbidden")
+prefix_rule(pattern = ["npm", "update"], decision = "forbidden")
+prefix_rule(pattern = ["npx"], decision = "forbidden")
+prefix_rule(pattern = ["pnpm", "install"], decision = "forbidden")
+prefix_rule(pattern = ["pnpm", "add"], decision = "forbidden")
+prefix_rule(pattern = ["pnpm", "update"], decision = "forbidden")
+prefix_rule(pattern = ["pnpm", "dlx"], decision = "forbidden")
+prefix_rule(pattern = ["uv", "add"], decision = "forbidden")
+prefix_rule(pattern = ["uv", "sync"], decision = "forbidden")
+prefix_rule(pattern = ["uv", "lock"], decision = "forbidden")
+prefix_rule(pattern = ["uvx"], decision = "forbidden")
+prefix_rule(pattern = ["pip", "install"], decision = "forbidden")
+prefix_rule(pattern = ["git", "commit"], decision = "forbidden")
+prefix_rule(pattern = ["git", "rebase"], decision = "forbidden")
+prefix_rule(pattern = ["git", "checkout", "--"], decision = "forbidden")
+prefix_rule(pattern = ["git", "restore"], decision = "forbidden")
+prefix_rule(pattern = ["git", "branch", "-D"], decision = "forbidden")
+prefix_rule(pattern = ["rm"], decision = "forbidden")
+prefix_rule(pattern = ["docker"], decision = "forbidden")
+prefix_rule(pattern = ["terraform"], decision = "forbidden")
+
+# Only these fixed review invocations can run outside the Codex sandbox.
+# The final -- prevents the prompt from overriding the restrictions.
+prefix_rule(
+    pattern = [
+        "claude", "--safe-mode", "--print", "--permission-mode", "plan",
+        "--tools", "Read,Glob,Grep", "--disallowedTools", "mcp__*", "--",
+    ],
+    decision = "allow",
+    justification = "Run Claude reviews with read/search tools and no customizations or MCP tools.",
+    match = ["claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' -- 'Review the code'"],
+    not_match = [
+        "claude --print 'Edit the code'",
+        "claude --dangerously-skip-permissions --print 'Edit the code'",
+        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --tools Bash -- 'Edit the code'",
+    ],
+)
+
+prefix_rule(
+    pattern = [
+        "claude", "--safe-mode", "--print", "--permission-mode", "plan",
+        "--tools", "Read,Glob,Grep", "--disallowedTools", "mcp__*",
+        "--model", "claude-opus-5-5", "--",
+    ],
+    decision = "allow",
+    justification = "Run Claude Opus 5.5 reviews with read/search tools and no customizations or MCP tools.",
+    match = ["claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 -- 'Review the code'"],
+    not_match = [
+        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model other-model -- 'Review the code'",
+        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 --tools Bash -- 'Edit the code'",
+        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 --dangerously-skip-permissions -- 'Edit the code'",
+    ],
+)
