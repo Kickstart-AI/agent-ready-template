@@ -8,6 +8,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 - Add testing rules to `AGENTS.md`: behavior tests, real data instead of mocks, regression tests for bugs, manual UI tests, and end-to-end tests for data and ML projects.
 - Instruct the `get-started` skill to adapt project-type-specific rules in `AGENTS.md`.
+- Add way-of-working rules to `AGENTS.md`: stay in the ticket scope, comment only why, keep completed plans unchanged, keep decision entries short, and link plans and decisions to tickets.
+- Instruct the `get-started` skill to record where tickets live and to offer focused architecture and convention docs.
 
 ## [0.2.0] - 2026-10-27
 
