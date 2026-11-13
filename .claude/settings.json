@@ -59,7 +59,9 @@
       "Bash(codex exec * -c *)",
       "Bash(codex exec *--config*)",
       "Bash(codex exec * -p *)",
-      "Bash(codex exec *--profile*)"
+      "Bash(codex exec *--profile*)",
+      "Bash(codex exec * -o *)",
+      "Bash(codex exec *--output*)"
     ],
     "ask": [
       "Bash(npm install *)",
