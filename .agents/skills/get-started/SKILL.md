@@ -28,6 +28,7 @@ Keep open follow-up items in a `## TODOs` section at the bottom of that plan fil
 Review `AGENTS.md` with the developer and customize it to their preferences before scaffolding implementation details.
 Language, coding and architecture guidelines should be in line with the plan.
 Communication and approach should be in line with the developer / team preference.
+Change the wording of rules that depend on the project type (for example, the UI and data/ML rules in `## Testing`), and remove the rules that do not apply.
 Keep it minimal and specific to this repo.
 
 ## 4. Execution
