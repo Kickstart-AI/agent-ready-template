@@ -4,6 +4,9 @@
 - [How to use this repository](#how-to-use-this-repository)
   - [As a reference](#as-a-reference)
   - [As a starting point for your own project](#as-a-starting-point-for-your-own-project)
+- [Security and permissions](#security-and-permissions)
+  - [Claude Code](#claude-security)
+  - [Codex](#codex-security)
 - [Content](#content)
   - [`AGENTS.md`](#agentsmd)
   - [`CLAUDE.md`](#claudemd)
@@ -41,6 +44,47 @@ Browse the `AGENTS.md`, the skill files and templates to see how agent instructi
 
 The `get-started` skill will kick in and guide you through setting up your project interactively.
 
+## Security and permissions
+
+Instructions in `AGENTS.md` are only requests. Agents can ignore them, especially in long sessions. This template therefore also uses settings that the agent tools enforce. Each agent has its own settings file, and the rules do not transfer between agents.
+
+<a id="claude-security"></a>
+
+### Claude Code
+
+`.claude/settings.json` contains three types of rules. Claude Code checks them in this order, and the first match wins:
+
+1. **`deny`**: Claude Code blocks the command. It does not ask you, in any permission mode, including auto mode. A matching `allow` rule or an earlier "Yes, and don't ask again" does not override it.
+2. **`ask`**: Claude Code always asks you, also in auto mode. The auto mode classifier cannot approve these commands.
+3. **`allow`**: Claude Code runs the command without asking.
+
+Other commands follow the permission mode. In manual mode Claude Code asks you. In auto mode a classifier decides.
+
+To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`. A rule in `.claude/settings.local.json` cannot override a `deny` rule, because Claude Code merges the rules from all files.
+
+**Rules match the command text only.** `Bash(git push *)` blocks `git push origin main`, but not `git -C . push` or `bash -c 'git push'`. The rules stop the usual form of a command. They are not a security boundary.
+
+**The sandbox is the security boundary.** With `sandbox.enabled`, the operating system limits every Bash command, whatever its text:
+
+- Commands can write only inside the project.
+- Commands cannot read the paths in the `Read` deny rules.
+- Each new network host needs your approval.
+- `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
+
+The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edit`) use the `Read` and `Edit` rules instead. For more information, see the [permissions](https://code.claude.com/docs/en/permissions) and [sandboxing](https://code.claude.com/docs/en/sandboxing) documentation.
+
+<a id="codex-security"></a>
+
+### Codex
+
+The project uses `workspace-write` so Codex can edit repository files and run commands within the sandbox. Network access is disabled by default. The rules in `.codex/rules/default.rules` block selected command prefixes, including dependency installation and updates, commits, rebases, file removal, Docker, and Terraform. See the rule file for the full list.
+
+**A `prompt` rule requires approval, but does not require a human to approve.** With **Approve for me** enabled (`approvals_reviewer = "auto_review"`), Codex sends these requests to its automatic reviewer. The reviewer can approve the command without asking you. With `approvals_reviewer = "user"`, eligible requests go to you instead. Codex has no documented per-command setting that forces human approval while Approve for me remains enabled.
+
+For this reason, this template uses `forbidden` for these commands instead of `prompt`. A matching command is blocked in both manual and automatic approval modes. Auto-review cannot approve it, and a matching `allow` rule does not override it. Run a needed blocked operation yourself in a separate terminal. The restricted Claude review command remains an explicit `allow` exception.
+
+These rules do not make all other commands safe. They match command prefixes and do not replace the sandbox. They also do not prevent reads of secret files. The project must be trusted for its rules to load; restart Codex after changes. See the [Codex rules](https://learn.chatgpt.com/docs/agent-configuration/rules) and [Auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
+
 ## Content
 
 ### `AGENTS.md`
@@ -65,7 +109,7 @@ Bash deny rules match the command text only, so `bash -c 'curl ...'` or `/usr/bi
 
 ### `.codex/`
 
-Codex uses `.codex/config.toml` and `.codex/rules/default.rules` in trusted projects. Restart Codex after changing rules. The workspace-write sandbox allows repository edits and non-blocked commands, with network access disabled. Commands that need more access can request approval. Command rules block or ask for approval for the matching command prefixes. See the [Codex rules documentation](https://learn.chatgpt.com/docs/agent-configuration/rules).
+Codex uses `.codex/config.toml` and `.codex/rules/default.rules` in trusted projects. Restart Codex after changing rules. The workspace-write sandbox allows repository edits and non-blocked commands, with network access disabled. Commands that need more access can request approval. Command rules block the listed command prefixes; the restricted Claude review command is explicitly allowed. See [Security and permissions](#security-and-permissions) for the approval behavior. See the [Codex rules documentation](https://learn.chatgpt.com/docs/agent-configuration/rules).
 
 These settings are not equivalent to the Claude settings. Codex rules match literal argument prefixes, not arbitrary argument positions or wildcards. Shell wrappers and constructs, alternate executable paths, and commands run by other tools can bypass these matches. The rules do not block reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment or use an enforced sandbox that restricts reads. Project settings are defaults and can be overridden; use managed requirements for enforced restrictions.
 
