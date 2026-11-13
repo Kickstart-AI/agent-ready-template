@@ -7,6 +7,7 @@
 - [Content](#content)
   - [`AGENTS.md`](#agentsmd)
   - [`CLAUDE.md`](#claudemd)
+  - [`.claude/settings.json`](#claudesettingsjson)
   - [`.agents/skills/`](#agentsskills)
   - [`docs/`](#docs)
   - [`templates/`](#templates)
@@ -49,6 +50,17 @@ See [this blog post](https://kickstart.ai/news/agentic-engineering-best-practice
 ### `CLAUDE.md`
 
 A one-liner that points to `AGENTS.md`. Claude Code reads `CLAUDE.md` by default, so this redirect makes sure it picks up the same instructions as every other agent.
+
+### `.claude/settings.json`
+
+Permission rules and sandbox settings that Claude Code enforces. Instructions in `AGENTS.md` can be ignored in long sessions, but these rules cannot be overridden by the agent:
+
+- **Deny**: reading secrets (`.env`, keys, cloud and SSH credentials), destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
+- **Ask**: installing dependencies, commits, and other commands that change local state.
+- **Sandbox**: Bash commands can only write inside the project, and each new network host needs your approval.
+- **Codex reviews**: `codex exec` runs outside the sandbox, because Codex uses its own sandbox. Deny rules block the flags that change the Codex sandbox (`-s workspace-write`, `danger-full-access`, `-c`, `-p`), so use `codex exec -s read-only`.
+
+Bash deny rules match the command text only, so `bash -c 'curl ...'` or `/usr/bin/curl` is not blocked by the rules. The sandbox is the real boundary. See the [permissions documentation](https://code.claude.com/docs/en/permissions#permission-rule-syntax). Put personal overrides in `.claude/settings.local.json`.
 
 ### `.agents/skills/`
 

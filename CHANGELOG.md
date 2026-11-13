@@ -3,6 +3,11 @@
 All notable changes to this project are recorded in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Security
+- Add `.claude/settings.json` with deny and ask permission rules and the Bash sandbox for Claude Code. `codex exec` runs outside the sandbox, but only with the Codex read-only sandbox.
+
 ## [0.2.0] - 2026-10-27
 
 Pull request: [#8](https://github.com/Kickstart-AI/agent-ready-template/pull/8)
