@@ -3,6 +3,12 @@
 All notable changes to this project are recorded in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Add testing rules to `AGENTS.md`: behavior tests, real data instead of mocks, regression tests for bugs, manual UI tests, and end-to-end tests for data and ML projects.
+- Instruct the `get-started` skill to adapt project-type-specific rules in `AGENTS.md`.
+
 ## [0.3.0] - 2026-11-13
 
 Pull request: [#9 - Add agent tool permission settings](https://github.com/Kickstart-AI/agent-ready-template/pull/9)
