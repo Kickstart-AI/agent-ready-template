@@ -6,7 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Security
-- Add `.claude/settings.json` with deny and ask permission rules and the Bash sandbox for Claude Code. `codex exec` runs outside the sandbox, but only with the Codex read-only sandbox.
+- Add Codex workspace-write sandbox defaults, command rules, and a restricted Claude review command that runs outside the sandbox. Document the limits in the README.
+- Add `.claude/settings.json` with deny and ask permission rules and the Bash sandbox for Claude Code. Document how to use Claude and Codex together.
 
 ## [0.2.0] - 2026-10-27
 

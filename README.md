@@ -8,6 +8,8 @@
   - [`AGENTS.md`](#agentsmd)
   - [`CLAUDE.md`](#claudemd)
   - [`.claude/settings.json`](#claudesettingsjson)
+  - [`.codex/`](#codex)
+  - [Using Claude and Codex together](#using-claude-and-codex-together)
   - [`.agents/skills/`](#agentsskills)
   - [`docs/`](#docs)
   - [`templates/`](#templates)
@@ -58,9 +60,32 @@ Permission rules and sandbox settings that Claude Code enforces. Instructions in
 - **Deny**: reading secrets (`.env`, keys, cloud and SSH credentials), destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
 - **Ask**: installing dependencies, commits, and other commands that change local state.
 - **Sandbox**: Bash commands can only write inside the project, and each new network host needs your approval.
-- **Codex reviews**: `codex exec` runs outside the sandbox, because Codex uses its own sandbox. Deny rules block the flags that change the Codex sandbox (`-s workspace-write`, `danger-full-access`, `-c`, `-p`), so use `codex exec -s read-only`.
 
 Bash deny rules match the command text only, so `bash -c 'curl ...'` or `/usr/bin/curl` is not blocked by the rules. The sandbox is the real boundary. See the [permissions documentation](https://code.claude.com/docs/en/permissions#permission-rule-syntax). Put personal overrides in `.claude/settings.local.json`.
+
+### `.codex/`
+
+Codex uses `.codex/config.toml` and `.codex/rules/default.rules` in trusted projects. Restart Codex after changing rules. The workspace-write sandbox allows repository edits and non-blocked commands, with network access disabled. Commands that need more access can request approval. Command rules block or ask for approval for the matching command prefixes. See the [Codex rules documentation](https://learn.chatgpt.com/docs/agent-configuration/rules).
+
+These settings are not equivalent to the Claude settings. Codex rules match literal argument prefixes, not arbitrary argument positions or wildcards. Shell wrappers and constructs, alternate executable paths, and commands run by other tools can bypass these matches. The rules do not block reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment or use an enforced sandbox that restricts reads. Project settings are defaults and can be overridden; use managed requirements for enforced restrictions.
+
+### Using Claude and Codex together
+
+You can use one agent to review the work of the other. The two directions work differently:
+
+- **Codex calls Claude**: the Codex rules allow this exact command outside the Codex sandbox:
+
+  ```sh
+  claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' -- "Review the relevant files and report findings."
+  ```
+
+  Claude can read and search, but has no shell or editing tools. Safe mode disables hooks, plugins, skills, and automatic `CLAUDE.md` loading; managed policy still applies. Supply review instructions and file paths in the prompt. Keep the final `--` so later arguments cannot change these restrictions. This is a tool restriction, not an OS read-only sandbox. See the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference).
+
+- **Claude calls Codex**: this does not work. Codex must write its own state in `~/.codex`, and the Claude sandbox blocks that. In our tests, the Claude desktop app did not apply a `sandbox.excludedCommands` exception for Codex. Run the Codex review yourself in a separate terminal:
+
+  ```sh
+  codex exec -s read-only -- "Review the uncommitted changes and report findings."
+  ```
 
 ### `.agents/skills/`
 
