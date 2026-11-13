@@ -124,13 +124,13 @@ You can use one agent to review the work of the other. The two directions work d
 
   Claude can read and search, but has no shell or editing tools. Safe mode disables hooks, plugins, skills, and automatic `CLAUDE.md` loading; managed policy still applies. Supply review instructions and file paths in the prompt. Keep the final `--` so later arguments cannot change these restrictions. This is a tool restriction, not an OS read-only sandbox. See the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference).
 
-- **Claude calls Codex**: Codex must write its own state in `~/.codex` and reach the OpenAI API, so it must run outside the Claude sandbox. Codex then uses its own read-only sandbox. `.claude/settings.json` excludes `codex exec -m * -s read-only -- *` from the Claude sandbox. Its `codex exec` deny rules block the flags that change the Codex sandbox, because the `*` for the model can match any text. Restart Claude after you change these settings. Claude can then run:
+- **Claude calls Codex**: Codex must write its own state in `~/.codex` and reach the OpenAI API, so it must run outside the Claude sandbox. Codex then uses its own read-only sandbox. `.claude/settings.json` excludes only `codex exec -m gpt-6-astra -s read-only -- *` from the Claude sandbox. The fixed model and sandbox flags come before `--`; only the prompt can vary. This prevents the model argument from matching extra flags. Other models or flag arrangements do not match this exception. The `codex exec` deny rules remain as an additional check, not a complete filter for every option spelling. Restart Claude after you change these settings. Claude can then run:
 
   ```sh
   codex exec -m gpt-6-astra -s read-only -- "Follow the review instructions in prompt.md."
   ```
 
-  Use exactly this form. A redirect (such as `< /dev/null` or `> review.txt`) or a command substitution (`$(...)`) keeps the command in the sandbox, and Codex fails. Outside the Claude sandbox, the Claude `Read` deny rules do not apply, so only the Codex settings limit what Codex can read. Claude reads the review from the command output. The `-o` flag is denied, because Codex would write that file outside its sandbox. A prompt that contains ` -c `, ` -o `, ` -p `, or "danger" is denied, so put long prompts in a file.
+  Use exactly this form. A redirect (such as `< /dev/null` or `> review.txt`) or a command substitution (`$(...)`) keeps the command in the sandbox, and Codex fails. Outside the Claude sandbox, the Claude `Read` deny rules do not apply, so only the Codex settings limit what Codex can read. Claude reads the review from the command output. The `-o` flag is denied, because Codex would write that file outside its sandbox. Option-like text in the prompt can also match the deny rules, so put long prompts in a file.
 
 ### `.agents/skills/`
 
