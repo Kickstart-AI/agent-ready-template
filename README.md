@@ -83,7 +83,7 @@ The project uses `workspace-write` so Codex can edit repository files and run co
 
 For this reason, this template uses `forbidden` for these commands instead of `prompt`. A matching command is blocked in both manual and automatic approval modes. Auto-review cannot approve it, and a matching `allow` rule does not override it. Run a needed blocked operation yourself in a separate terminal. The restricted Claude review command remains an explicit `allow` exception.
 
-These rules do not make all other commands safe. They match command prefixes and do not replace the sandbox. They also do not prevent reads of secret files. The project must be trusted for its rules to load; restart Codex after changes. See the [Codex rules](https://learn.chatgpt.com/docs/agent-configuration/rules) and [Auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
+These rules do not make all other commands safe. They match literal command prefixes, so shell wrappers, alternate executable paths, and commands run by other tools can bypass them. They do not replace the sandbox, and they do not prevent reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment. Project settings are defaults that users can override; use managed requirements for enforced restrictions. The project must be trusted for its rules to load; restart Codex after changes. See the [Codex rules](https://learn.chatgpt.com/docs/agent-configuration/rules) and [Auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
 
 ## Content
 
@@ -99,19 +99,17 @@ A one-liner that points to `AGENTS.md`. Claude Code reads `CLAUDE.md` by default
 
 ### `.claude/settings.json`
 
-Permission rules and sandbox settings that Claude Code enforces. Instructions in `AGENTS.md` can be ignored in long sessions, but these rules cannot be overridden by the agent:
+Claude Code permission rules and sandbox settings:
 
 - **Deny**: reading secrets (`.env`, keys, cloud and SSH credentials), destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
 - **Ask**: installing dependencies, commits, and other commands that change local state.
-- **Sandbox**: Bash commands can only write inside the project, and each new network host needs your approval.
+- **Sandbox**: enabled, without the retry outside the sandbox.
 
-Bash deny rules match the command text only, so `bash -c 'curl ...'` or `/usr/bin/curl` is not blocked by the rules. The sandbox is the real boundary. See the [permissions documentation](https://code.claude.com/docs/en/permissions#permission-rule-syntax). Put personal overrides in `.claude/settings.local.json`.
+Put personal overrides in `.claude/settings.local.json`. See [Claude Code](#claude-security) for how the rules work.
 
 ### `.codex/`
 
-Codex uses `.codex/config.toml` and `.codex/rules/default.rules` in trusted projects. Restart Codex after changing rules. The workspace-write sandbox allows repository edits and non-blocked commands, with network access disabled. Commands that need more access can request approval. Command rules block the listed command prefixes; the restricted Claude review command is explicitly allowed. See [Security and permissions](#security-and-permissions) for the approval behavior. See the [Codex rules documentation](https://learn.chatgpt.com/docs/agent-configuration/rules).
-
-These settings are not equivalent to the Claude settings. Codex rules match literal argument prefixes, not arbitrary argument positions or wildcards. Shell wrappers and constructs, alternate executable paths, and commands run by other tools can bypass these matches. The rules do not block reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment or use an enforced sandbox that restricts reads. Project settings are defaults and can be overridden; use managed requirements for enforced restrictions.
+Codex settings in `.codex/config.toml` and command rules in `.codex/rules/default.rules`. See [Codex](#codex-security) for how the rules work.
 
 ### Using Claude and Codex together
 
