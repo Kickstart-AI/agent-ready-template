@@ -123,7 +123,7 @@ Definition of done checklist:
 - Open decisions or deferred items are listed explicitly.
 
 ## 6. Wrap-up
-Copy the dependency bootstrap for the chosen stack into the project's `README.md`, because the developer must repeat it when versions change. Confirm with the developer that the project is ready. Then ask the developer to remove the `get-started` skill in a separate terminal, because the agent sandbox blocks commands that delete skill files:
+Copy the dependency bootstrap for the chosen stack into the project's `README.md`, because the developer must repeat it when versions change. Confirm with the developer that the project is ready. Then ask the developer to remove the `get-started` skill in a separate terminal, because the agent restrictions block it (Claude Code blocks Bash writes to skill files, and the Codex rules forbid `rm`):
 
 ```sh
 rm -r .agents/skills/get-started
