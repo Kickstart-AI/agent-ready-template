@@ -8,14 +8,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 Pull request: [#9 - Add agent tool permission settings](https://github.com/Kickstart-AI/agent-ready-template/pull/9)
 
 ### Security
-- Disable ordinary Codex sandbox escalation approvals while retaining explicit allow rules and the other approval categories.
-- Add Claude Code deny and ask rules, with the Bash sandbox enabled. Allow sandboxed commands to reach `api.github.com`, `registry.npmjs.org`, and `pypi.org`, the same hosts as the Codex proxy. Cover more install commands in the Claude ask rules and the Codex forbidden rules: `npm ci`, `npm add`, `pnpm i`, `yarn`, `bun add`, `bun install`, `pip3 install`, `python -m pip install`, and `uv pip install`.
-- Add Codex workspace-write defaults, a network proxy restricted to `api.github.com`, `registry.npmjs.org`, and `pypi.org`, and forbidden command rules. Commands that require human approval in Claude are blocked in Codex because Approve for me can approve `prompt` rules automatically.
-- Run plain `git fetch` and `git pull`, without arguments, outside the Claude sandbox, so they can use SSH. Block sandboxed writes to `.git/config`, `.git/config.worktree`, and `.git/hooks` in Claude, because git runs commands from these files.
+- Add Claude Code permission rules in `.claude/settings.json`:
+  - Deny reading secrets (`.env` files, keys, cloud and SSH credentials), destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
+  - Ask before dependency installs, commits, and other commands that change local state.
+  - Allow the TypeScript template checks (`pnpm validate`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check`) without a prompt.
+- Enable the Claude Code Bash sandbox. Sandboxed commands still follow the permission mode, cannot run again outside the sandbox, and can reach only `api.github.com`, `registry.npmjs.org`, and `pypi.org` without approval. Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Only plain `git fetch` and `git pull`, without arguments, run outside the sandbox, so they can use SSH.
+- Add Codex settings in `.codex/config.toml`: the `workspace-write` sandbox, network access only through a proxy restricted to the same three hosts, and rejection of sandbox escalation requests.
+- Add Codex command rules in `.codex/rules/default.rules`. They forbid the same commands that Claude Code denies or asks about, because Codex automatic review can approve `prompt` rules.
 
-### Changed
-- Clarify that allowed domains can serve source code and package archives, and that command rules do not guarantee packages cannot be downloaded or installed.
-- Consolidate README security and permission guidance. Explain the agents' differences, command matching limits, and automatic review.
+### Added
+- Add a "Security and permissions" section to the README. It explains how each agent enforces its rules, the limits of command matching, and that the allowed hosts can serve source code and packages.
 
 ## [0.3.0] - 2026-11-16
 
