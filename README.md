@@ -57,7 +57,7 @@ Claude Code checks permission rules in this order, and the first match wins:
 2. **`ask`**: Claude Code always asks you, also in auto mode. The auto mode classifier cannot approve these commands.
 3. **`allow`**: Claude Code runs the command without asking.
 
-Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Other Bash commands run inside the sandbox. Because `autoAllowBashIfSandboxed` is `false`, they follow the mode like file edits and commands outside the sandbox: in manual mode Claude Code asks you, and in auto mode a classifier decides.
+Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Other Bash commands run inside the sandbox. Because `autoAllowBashIfSandboxed` is `false`, they follow the mode like file edits and commands outside the sandbox: in manual mode Claude Code asks you, and in auto mode a classifier decides. The `allow` rules let the TypeScript template checks (`pnpm validate`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check`) run without asking. These scripts come from `package.json`, so check changes to it in the diff. Codex has no matching rules, because Codex `allow` rules run commands outside its sandbox.
 
 Put personal overrides in `.claude/settings.local.json`. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
 
