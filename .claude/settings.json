@@ -77,6 +77,17 @@
       "Bash(uv lock *)",
       "Bash(uvx *)",
       "Bash(pip install *)",
+      "Bash(pip3 install *)",
+      "Bash(python -m pip install *)",
+      "Bash(python3 -m pip install *)",
+      "Bash(uv pip install *)",
+      "Bash(npm ci *)",
+      "Bash(npm add *)",
+      "Bash(pnpm i *)",
+      "Bash(yarn *)",
+      "Bash(bun add *)",
+      "Bash(bun install *)",
+      "Bash(bun i *)",
       "Bash(git commit *)",
       "Bash(git rebase *)",
       "Bash(git checkout -- *)",
@@ -91,6 +102,9 @@
     "enabled": true,
     "allowUnsandboxedCommands": false,
     "excludedCommands": ["codex exec -m gpt-6-astra -s read-only -- *", "git fetch", "git pull"],
+    "network": {
+      "allowedDomains": ["api.github.com", "registry.npmjs.org", "pypi.org"]
+    },
     "filesystem": {
       "denyWrite": ["./.git/config", "./.git/config.worktree", "./.git/hooks"]
     }
