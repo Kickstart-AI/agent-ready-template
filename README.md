@@ -58,7 +58,7 @@ Claude Code checks permission rules in this order, and the first match wins:
 2. **`ask`**: Claude Code always asks you, also in auto mode. The auto mode classifier cannot approve these commands.
 3. **`allow`**: Claude Code runs the command without asking.
 
-Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Because the sandbox is enabled, other Bash commands also run without asking, but only inside the sandbox. File edits and commands outside the sandbox follow the mode: in manual mode Claude Code asks you, and in auto mode a classifier decides.
+Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Other Bash commands run inside the sandbox. Because `autoAllowBashIfSandboxed` is `false`, they follow the mode like file edits and commands outside the sandbox: in manual mode Claude Code asks you, and in auto mode a classifier decides.
 
 Put personal overrides in `.claude/settings.local.json`. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
 
@@ -71,6 +71,7 @@ Put personal overrides in `.claude/settings.local.json`. These cannot override a
 - Commands can reach `api.github.com`, `registry.npmjs.org`, and `pypi.org` without approval, the same hosts as the Codex proxy. Each other host needs approval: from you in manual mode, or from the classifier in auto mode. To block other hosts instead, set `sandbox.network.strictAllowlist: true` in `~/.claude/settings.json`. Claude Code reads this key only from user or managed settings. With it, Claude Code ignores `allowedDomains` from the project, so also put the allowed hosts in `~/.claude/settings.json`.
 - Downloads and installs are still possible from the allowed hosts. The rules cover the usual install commands, but not every alias (npm alone has several, such as `npm in`) or a script that downloads packages itself. The rules cannot prevent installs in general. The sandbox limits what an installed package can do.
 - `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
+- Sandboxed commands can still change files that run later outside the sandbox, such as `.husky/` hooks, `.pre-commit-config.yaml` and `package.json` scripts. Check these files in the diff before you commit.
 - Three commands run outside the sandbox: the read-only Codex review command (see [Using Claude and Codex together](#using-claude-and-codex-together)), and plain `git fetch` and `git pull` without arguments. SSH does not work through the sandbox network proxy, so git cannot reach the remote from inside the sandbox. Arguments are not allowed, because options such as `--upload-pack` run a program.
 - Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Git runs commands from these files, for example `core.sshCommand`, and the git commands above run outside the sandbox. Settings that already point to files in the project, such as `core.hooksPath` or `include.path`, are not protected, so check `.git/config` in existing clones.
 
