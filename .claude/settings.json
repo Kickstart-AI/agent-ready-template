@@ -90,9 +90,9 @@
   "sandbox": {
     "enabled": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": ["codex exec -m gpt-6-astra -s read-only -- *", "git fetch *", "git pull *"],
+    "excludedCommands": ["codex exec -m gpt-6-astra -s read-only -- *", "git fetch", "git pull"],
     "filesystem": {
-      "denyWrite": ["./.git/config", "./.git/hooks"]
+      "denyWrite": ["./.git/config", "./.git/config.worktree", "./.git/hooks"]
     }
   }
 }
