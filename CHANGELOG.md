@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [0.3.0] - 2026-11-16
 
+Pull request: [#10](https://github.com/Kickstart-AI/agent-ready-template/pull/10)
+
 ### Added
 - Add testing rules to `AGENTS.md`: behavior tests, real data instead of mocks, regression tests for bugs, manual UI tests, and end-to-end tests for data and ML projects.
 - Instruct the `get-started` skill to adapt project-type-specific rules in `AGENTS.md`.
@@ -58,5 +60,6 @@ This release protects the templates against recent vulnerabilities and supply-ch
 ### Changed
 - Dependency updates from Dependabot ([#6](https://github.com/Kickstart-AI/agent-ready-template/pull/6)).
 
+[0.3.0]: https://github.com/Kickstart-AI/agent-ready-template/pull/10
 [0.2.0]: https://github.com/Kickstart-AI/agent-ready-template/pull/8
-[0.1.0]: https://github.com/Kickstart-AI/agent-ready-template/commits/main
+[0.1.0]: https://github.com/Kickstart-AI/agent-ready-template/commits/ff6b7cb
