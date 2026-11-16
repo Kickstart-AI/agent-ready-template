@@ -12,6 +12,7 @@ Pull request: [#9 - Add agent tool permission settings](https://github.com/Kicks
 - Add Codex workspace-write defaults with network access disabled and forbidden command rules. Commands that require human approval in Claude are blocked in Codex because Approve for me can approve `prompt` rules automatically.
 - Allow restricted Claude review invocations from Codex, with either the default model or explicit `claude-opus-5-5`.
 - Limit the Claude sandbox exception to the fixed `codex exec -m gpt-6-astra -s read-only --` review command. Keep additional deny rules for unsafe Codex flags and output files.
+- Run `git fetch` and `git pull` outside the Claude sandbox, so they can use SSH. Block sandboxed writes to `.git/config` and `.git/hooks`, because git runs commands from these files.
 
 ### Changed
 - Consolidate README security and permission guidance. Explain the agents' differences, command matching limits, automatic review, and cross-agent review commands.

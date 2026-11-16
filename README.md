@@ -70,7 +70,8 @@ Put personal overrides in `.claude/settings.local.json`. These cannot override a
 - Commands cannot read the paths in the `Read` deny rules.
 - Each new network host needs approval: from you in manual mode, or from the classifier in auto mode.
 - `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
-- The only exception is the read-only Codex review command. See [Using Claude and Codex together](#using-claude-and-codex-together).
+- Three commands run outside the sandbox: the read-only Codex review command (see [Using Claude and Codex together](#using-claude-and-codex-together)), `git fetch`, and `git pull`. SSH does not work through the sandbox network proxy, so git cannot reach the remote from inside the sandbox.
+- Commands cannot write `.git/config` or `.git/hooks`. Git runs commands from these files, for example `core.sshCommand`, and `git fetch` and `git pull` run outside the sandbox.
 
 The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edit`) use the `Read` and `Edit` rules instead. For more information, see the [permissions](https://code.claude.com/docs/en/permissions) and [sandboxing](https://code.claude.com/docs/en/sandboxing) documentation.
 
