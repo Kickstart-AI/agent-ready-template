@@ -1,5 +1,9 @@
-approval_policy = "on-request"
+approval_policy = { granular = { sandbox_approval = false, rules = true, mcp_elicitations = true, request_permissions = true, skill_approval = true } }
 sandbox_mode = "workspace-write"
 
 [sandbox_workspace_write]
-network_access = false
+network_access = true
+
+[features.network_proxy]
+enabled = true
+domains = { "api.github.com" = "allow", "registry.npmjs.org" = "allow", "pypi.org" = "allow" }

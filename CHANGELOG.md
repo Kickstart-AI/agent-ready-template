@@ -8,13 +8,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 Pull request: [#9 - Add agent tool permission settings](https://github.com/Kickstart-AI/agent-ready-template/pull/9)
 
 ### Security
-- Add Claude Code deny and ask rules, with the Bash sandbox enabled.
-- Add Codex workspace-write defaults with network access disabled and forbidden command rules. Commands that require human approval in Claude are blocked in Codex because Approve for me can approve `prompt` rules automatically.
+- Disable ordinary Codex sandbox escalation approvals while retaining explicit allow rules and the other approval categories.
+- Add Claude Code deny and ask rules, with the Bash sandbox enabled. Allow sandboxed commands to reach `api.github.com`, `registry.npmjs.org`, and `pypi.org`, the same hosts as the Codex proxy. Cover more install commands in the Claude ask rules and the Codex forbidden rules: `npm ci`, `npm add`, `pnpm i`, `yarn`, `bun add`, `bun install`, `pip3 install`, `python -m pip install`, and `uv pip install`.
+- Add Codex workspace-write defaults, a network proxy restricted to `api.github.com`, `registry.npmjs.org`, and `pypi.org`, and forbidden command rules. Commands that require human approval in Claude are blocked in Codex because Approve for me can approve `prompt` rules automatically.
 - Allow restricted Claude review invocations from Codex, with either the default model or explicit `claude-opus-5-5`.
 - Limit the Claude sandbox exception to the fixed `codex exec -m gpt-6-astra -s read-only --` review command. Keep additional deny rules for unsafe Codex flags and output files.
-- Run `git fetch` and `git pull` outside the Claude sandbox, so they can use SSH. Block sandboxed writes to `.git/config` and `.git/hooks`, because git runs commands from these files.
+- Run plain `git fetch` and `git pull`, without arguments, outside the Claude sandbox, so they can use SSH. Block sandboxed writes to `.git/config`, `.git/config.worktree`, and `.git/hooks`, because git runs commands from these files.
 
 ### Changed
+- Clarify that allowed domains can serve source code and package archives, and that command rules do not guarantee packages cannot be downloaded or installed.
+- Explain why Claude has argument-free Git fetch and pull sandbox exceptions while the Codex template does not.
 - Consolidate README security and permission guidance. Explain the agents' differences, command matching limits, automatic review, and cross-agent review commands.
 
 ## [0.3.0] - 2026-11-16
