@@ -1,6 +1,9 @@
 approval_policy = { granular = { sandbox_approval = false, rules = true, mcp_elicitations = true, request_permissions = true, skill_approval = true } }
 sandbox_mode = "workspace-write"
 
+[shell_environment_policy]
+set = { UV_CACHE_DIR = ".cache/uv", UV_TOOL_DIR = ".cache/uv-tools", PRE_COMMIT_HOME = ".cache/pre-commit" }
+
 [sandbox_workspace_write]
 network_access = true
 

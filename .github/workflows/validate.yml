@@ -21,7 +21,7 @@ jobs:
       - run: uv lock --check
         working-directory: templates/py
       # deptry needs a [project] section, which only exists after get-started.
-      - run: uvx pre-commit@4.6.2 run --all-files --show-diff-on-failure --config templates/py/.pre-commit-config.yaml
+      - run: uvx pre-commit@4.7.0 run --all-files --show-diff-on-failure --config templates/py/.pre-commit-config.yaml
         env:
           SKIP: deptry
 

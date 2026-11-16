@@ -45,6 +45,6 @@ export default defineConfig(
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
-    ignores: ["dist/**", "build/**", "coverage/**", "node_modules/**"],
+    ignores: ["dist/**", "build/**", "coverage/**", "node_modules/**", ".cache/**"],
   },
 );
