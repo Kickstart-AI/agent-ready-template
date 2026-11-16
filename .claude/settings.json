@@ -53,16 +53,7 @@
       "Bash(scp *)",
       "Bash(nc *)",
       "Bash(printenv *)",
-      "Bash(env)",
-      "Bash(codex exec *danger*)",
-      "Bash(codex exec *workspace-write*)",
-      "Bash(codex exec *--full-auto*)",
-      "Bash(codex exec * -c *)",
-      "Bash(codex exec *--config*)",
-      "Bash(codex exec * -p *)",
-      "Bash(codex exec *--profile*)",
-      "Bash(codex exec * -o *)",
-      "Bash(codex exec *--output*)"
+      "Bash(env)"
     ],
     "ask": [
       "Bash(npm install *)",
@@ -112,7 +103,7 @@
     "autoAllowBashIfSandboxed": false,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": ["codex exec -m gpt-6-astra -s read-only -- *", "git fetch", "git pull"],
+    "excludedCommands": ["git fetch", "git pull"],
     "network": {
       "allowedDomains": ["api.github.com", "registry.npmjs.org", "pypi.org"]
     },

@@ -12,7 +12,6 @@
   - [`CLAUDE.md`](#claudemd)
   - [`.claude/settings.json`](#claudesettingsjson)
   - [`.codex/`](#codex)
-  - [Using Claude and Codex together](#using-claude-and-codex-together)
   - [`.agents/skills/`](#agentsskills)
   - [`docs/`](#docs)
   - [`templates/`](#templates)
@@ -72,8 +71,8 @@ Put personal overrides in `.claude/settings.local.json`. These cannot override a
 - Downloads and installs are still possible from the allowed hosts. The rules cover the usual install commands, but not every alias (npm alone has several, such as `npm in`) or a script that downloads packages itself. The rules cannot prevent installs in general. The sandbox limits what an installed package can do.
 - `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
 - Sandboxed commands can still change files that run later outside the sandbox, such as `.husky/` hooks, `.pre-commit-config.yaml` and `package.json` scripts. Check these files in the diff before you commit.
-- Three commands run outside the sandbox: the read-only Codex review command (see [Using Claude and Codex together](#using-claude-and-codex-together)), and plain `git fetch` and `git pull` without arguments. SSH does not work through the sandbox network proxy, so git cannot reach the remote from inside the sandbox. Arguments are not allowed, because options such as `--upload-pack` run a program.
-- Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Git runs commands from these files, for example `core.sshCommand`, and the git commands above run outside the sandbox. Settings that already point to files in the project, such as `core.hooksPath` or `include.path`, are not protected, so check `.git/config` in existing clones.
+- Only plain `git fetch` and `git pull`, without arguments, run outside the sandbox. SSH does not work through the sandbox network proxy, so git cannot reach the remote from inside the sandbox. Arguments are not allowed, because options such as `--upload-pack` run a program.
+- Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Git runs commands from these files, for example `core.sshCommand`, and `git fetch` and `git pull` run outside the sandbox. Settings that already point to files in the project, such as `core.hooksPath` or `include.path`, are not protected, so check `.git/config` in existing clones.
 
 The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edit`) use the `Read` and `Edit` rules instead. For more information, see the [permissions](https://code.claude.com/docs/en/permissions) and [sandboxing](https://code.claude.com/docs/en/sandboxing) documentation.
 
@@ -103,11 +102,11 @@ Metadata commands can use temporary caches, for example `npm view typescript ver
 
 The granular approval policy sets `sandbox_approval = false`. Ordinary requests to run outside the sandbox are rejected instead of sent to you or Auto-review. Explicit `allow` rules still permit their matching commands outside the sandbox without approval. The other approval categories remain enabled: command-rule prompts (`rules`), MCP requests (`mcp_elicitations`), additional permission requests (`request_permissions`), and skill approvals (`skill_approval`). This blocks sandbox escalation requests; it is not a blanket ban on every way to grant access. See the [approval policy reference](https://learn.chatgpt.com/docs/config-file/config-reference).
 
-**Git fetch and pull differ from Claude.** The Claude settings above exclude only plain `git fetch` and `git pull`, without arguments, from its sandbox. This template adds no corresponding Codex allow rules. Codex rules match prefixes: allowing `["git", "fetch"]` or `["git", "pull"]` would also allow arbitrary arguments. These can include options such as `--upload-pack` that execute a program outside the sandbox. We therefore leave these exceptions out. The proxy does not allow Git remote hosts such as `github.com`, `.git` remains protected from sandboxed writes, and ordinary sandbox escalation is rejected. Run remote fetch and pull operations yourself in a separate terminal. Additional global rules, including rules for wrappers such as `rtk`, can change this behavior.
+**Codex cannot fetch or pull.** The proxy does not allow Git remote hosts such as `github.com`, and ordinary sandbox escalation is rejected. This template adds no `allow` rules for `git fetch` or `git pull`, because Codex rules match prefixes: `["git", "fetch"]` would also allow any arguments, including options such as `--upload-pack` that run a program outside the sandbox. Run these commands yourself in a separate terminal.
 
 **A `prompt` rule requires approval, but does not require a human to approve.** With **Approve for me** enabled (`approvals_reviewer = "auto_review"`), Codex sends these requests to its automatic reviewer. The reviewer can approve the command without asking you. With `approvals_reviewer = "user"`, eligible requests go to you instead. Codex has no documented per-command setting that forces human approval while Approve for me remains enabled.
 
-For this reason, this template uses `forbidden` for these commands instead of `prompt`. A matching command is blocked in both manual and automatic approval modes. Auto-review cannot approve it, and a matching `allow` rule does not override it. Run a needed blocked operation yourself in a separate terminal. The [Claude review command](#using-claude-and-codex-together) remains an explicit `allow` exception.
+For this reason, this template uses `forbidden` for these commands instead of `prompt`. A matching command is blocked in both manual and automatic approval modes. Auto-review cannot approve it, and a matching `allow` rule does not override it. Run a needed blocked operation yourself in a separate terminal.
 
 These rules do not make all other commands safe. They match literal command prefixes, so shell wrappers, alternate executable paths, and commands run by other tools can bypass them. They do not replace the sandbox, and they do not prevent reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment. Project settings are defaults that users can override; use managed requirements for enforced restrictions. The project must be trusted for its rules to load; restart Codex after changes. See the [Codex rules](https://learn.chatgpt.com/docs/agent-configuration/rules) and [Auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
 
@@ -130,32 +129,6 @@ Claude Code permission rules and sandbox settings. See [Security and permissions
 ### `.codex/`
 
 Codex settings in `.codex/config.toml` and command rules in `.codex/rules/default.rules`. See [Codex](#codex-security) for how the rules work.
-
-### Using Claude and Codex together
-
-You can use one agent to review the work of the other. The two directions work differently:
-
-- **Codex calls Claude**: the Codex rules allow this exact command outside the Codex sandbox:
-
-  ```sh
-  claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 -- "Review the relevant files and report findings."
-  ```
-
-  The rule allows `--model claude-opus-5-5` in this position, or no `--model` option to use the default model. Other model values or flag arrangements do not match this exception. Ordinary sandbox escalation requests for those commands are rejected by `sandbox_approval = false`. A separate applicable allow or prompt rule can still provide another approval path.
-
-  **The allow rules do not enforce these restrictions on every Claude invocation.** They only pre-approve the exact forms above. Other global or managed rules can authorize additional forms, and the other approval categories remain enabled. Automatic review is not a guarantee that commands with weaker permissions will be rejected.
-
-  Codex prefix rules support neither regex nor wildcard argument matching. A deny rule for `claude --dangerously-skip-permissions` would miss the same flag after other arguments. We therefore do not add rules that depend on the position of individual unsafe flags. Use the documented review command; outside that form, safety depends on the active sandbox and reviewer. See the [Codex rule syntax](https://learn.chatgpt.com/docs/agent-configuration/rules#understand-rule-fields).
-
-  Claude can read and search, but has no shell or editing tools. Safe mode disables hooks, plugins, skills, and automatic `CLAUDE.md` loading; managed policy still applies. Supply review instructions and file paths in the prompt. Keep the final `--` so later arguments cannot change these restrictions. This is a tool restriction, not an OS read-only sandbox. See the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference).
-
-- **Claude calls Codex**: Codex must write its own state in `~/.codex` and reach the OpenAI API, so it must run outside the Claude sandbox. Codex then uses its own read-only sandbox. `.claude/settings.json` excludes only `codex exec -m gpt-6-astra -s read-only -- *` from the Claude sandbox. The fixed model and sandbox flags come before `--`; only the prompt can vary. This prevents the model argument from matching extra flags. Other models or flag arrangements do not match this exception. The `codex exec` deny rules remain as an additional check, not a complete filter for every option spelling. Restart Claude after you change these settings. Claude can then run:
-
-  ```sh
-  codex exec -m gpt-6-astra -s read-only -- "Follow the review instructions in prompt.md."
-  ```
-
-  Use exactly this form. A redirect (such as `< /dev/null` or `> review.txt`) or a command substitution (`$(...)`) keeps the command in the sandbox, and Codex fails. Outside the Claude sandbox, the Claude `Read` deny rules do not apply, so only the Codex settings limit what Codex can read. Claude reads the review from the command output. The `-o` flag is denied, because Codex would write that file outside its sandbox. Option-like text in the prompt can also match the deny rules, so put long prompts in a file.
 
 ### `.agents/skills/`
 
