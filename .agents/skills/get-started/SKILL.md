@@ -44,20 +44,20 @@ Create the minimum docs structure needed by this repo if it does not exist yet:
 - `docs/decisions/`
 Handle template scaffolding based on the chosen project language:
 - If the project is **Python**:
-  - Move `templates/py/.pre-commit-config.yaml`, `templates/py/.gitignore`, and `templates/py/pyproject.toml` to the repo root.
+  - Move `templates/py/.pre-commit-config.yaml`, `templates/py/.gitignore`, `templates/py/pyproject.toml`, and `templates/py/uv.lock` to the repo root.
   - Delete `templates/ts/` and any TS-only template files.
 - If the project is **TypeScript**:
-  - Move `templates/ts/package.json`, `templates/ts/.npmrc`, `templates/ts/pnpm-workspace.yaml`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/.secretlintrc.json`, `templates/ts/.prettierignore`, and `templates/ts/.husky/` to the repo root.
+  - Move `templates/ts/package.json`, `templates/ts/pnpm-lock.yaml`, `templates/ts/.npmrc`, `templates/ts/pnpm-workspace.yaml`, `templates/ts/.gitignore`, `templates/ts/tsconfig.json`, `templates/ts/eslint.config.mjs`, `templates/ts/.secretlintrc.json`, `templates/ts/.prettierignore`, and `templates/ts/.husky/` to the repo root.
   - Delete `templates/py/` and any Python-only template files.
 - If the project is **neither Python nor TypeScript**:
   - Create equivalent starter files for the selected stack in the repo root.
   - Remove both `templates/py/` and `templates/ts/` so only relevant files remain.
-- In `pyproject.toml` or `package.json`, set the project `name` and reset `version` to `0.1.0`. Replace `CHANGELOG.md` with an empty one for the new project.
-- In `.github/workflows/validate.yml`, keep only the job for the chosen stack and adapt it to the project: run it from the repo root, remove the template-only steps and settings (the placeholder source file and the `SKIP: deptry` setting), and use `pnpm install --frozen-lockfile` once a lockfile exists. For other stacks, replace the jobs with ones that run the stack's checks.
+- In `pyproject.toml` or `package.json`, set the project `name` and reset `version` to `0.1.0`. Then ask the developer to update the lockfile (`uv lock` or `pnpm install`), because the lockfile records the name and version. Replace `CHANGELOG.md` with an empty one for the new project.
+- In `.github/workflows/validate.yml`, keep only the job for the chosen stack and adapt it to the project: run it from the repo root, remove the template-only steps and settings (the placeholder source file and the `SKIP: deptry` setting), and keep the lockfile checks (`uv lock --check`, `pnpm install --frozen-lockfile`). For other stacks, replace the jobs with ones that run the stack's checks.
 - In `.github/dependabot.yml`, keep only the entry for the chosen stack and set its `directory` to `/`. For other stacks, replace the entries with one for the stack's package ecosystem.
 Execute the plan. Make sure to keep the developer in the loop and explain what you are doing.
 Before handoff, validate that the configured repo works:
-- Run the smallest relevant install/setup command for the chosen stack.
+- Ask the developer to run the install/setup command (for example `uv sync` or `pnpm install`) in a separate terminal. The agent sandbox blocks the hosts that serve package files, so the agent cannot install dependencies. Tell the developer this at the start of this step, not after a failed install. For TypeScript, the developer must also install the pnpm version from `packageManager` in `package.json` (for example `pnpm self-update <version>`). With any other version, every `pnpm` command fails in the sandbox.
 - Run the configured lint, typecheck, test, and validation commands.
 - If a validation command fails because the project has no source files yet, either add the minimal expected placeholder source/test structure or adjust the command so a fresh scaffold passes.
 - Report each validation command and whether it passed.

@@ -59,7 +59,7 @@ Claude Code checks permission rules in this order, and the first match wins:
 
 Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Other Bash commands run inside the sandbox. Because `autoAllowBashIfSandboxed` is `false`, they follow the mode like file edits and commands outside the sandbox: in manual mode Claude Code asks you, and in auto mode a classifier decides. The `allow` rules let the TypeScript template checks (`pnpm validate`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check`) run without asking. These scripts come from `package.json`, so check changes to it in the diff. Codex has no matching rules, because Codex `allow` rules run commands outside its sandbox.
 
-Put personal overrides in `.claude/settings.local.json`. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
+Put personal overrides in `.claude/settings.local.json`. "Yes, and don't ask again" also saves an `allow` rule there. Do not choose it for generic tools such as `sed`, `python3`, or `bash`: a rule like `Bash(sed *)` lets every later `sed` command run without asking. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
 
 **Rules match the command text only.** `Bash(git push *)` blocks `git push origin main`, but not `git -C . push` or `bash -c 'git push'`. The rules stop the usual form of a command. They are not a security boundary.
 
@@ -68,6 +68,7 @@ Put personal overrides in `.claude/settings.local.json`. These cannot override a
 - Commands can write only inside the project and temporary directories.
 - Commands cannot read the paths in the `Read` deny rules.
 - Commands can reach `api.github.com`, `registry.npmjs.org`, and `pypi.org` without approval, the same hosts as the Codex proxy. Each other host needs approval: from you in manual mode, or from the classifier in auto mode. To block other hosts instead, set `sandbox.network.strictAllowlist: true` in `~/.claude/settings.json`. Claude Code reads this key only from user or managed settings. With it, Claude Code ignores `allowedDomains` from the project, so also put the allowed hosts in `~/.claude/settings.json`.
+- Package files come from hosts that are not allowed, for example `files.pythonhosted.org`. So agents cannot install dependencies. Run `uv sync` or `pnpm install` yourself in a separate terminal. The templates keep the uv cache and the pnpm store in the project (`.uv-cache/`, `.pnpm-store/`, `.pnpm-cache/`), so sandboxed commands can still read and write them.
 - Downloads and installs are still possible from the allowed hosts. The rules cover the usual install commands, but not every alias (npm alone has several, such as `npm in`) or a script that downloads packages itself. The rules cannot prevent installs in general. The sandbox limits what an installed package can do.
 - `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
 - Sandboxed commands can still change files that run later outside the sandbox, such as `.husky/` hooks, `.pre-commit-config.yaml` and `package.json` scripts. Check these files in the diff before you commit.
@@ -163,12 +164,14 @@ It is inspired by the concept of "Agent Readiness" by Factory.AI: https://factor
 - `.pre-commit-config.yaml`
 - `.gitignore`
 - `pyproject.toml`
+- `uv.lock`
 
 Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, has a short permanent delay of 2 days instead, so certificate revocations install quickly. To let another urgent security fix through, add the package to `exclude-newer-package`.
 
 #### `ts/`
 
 - `package.json`
+- `pnpm-lock.yaml`
 - `.npmrc`
 - `pnpm-workspace.yaml`
 - `.gitignore`
@@ -180,4 +183,4 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All direct dependencies, and pnpm itself, are pinned to exact versions. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` sets a patched minimum version for each supported Node.js line (`engines.node`), and both package managers refuse to install on an older version. Raise these minimums when Node.js publishes a security release. In CI, set `check-latest: true` on `actions/setup-node`, because runner images can lag behind a security release.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All direct dependencies, and pnpm itself, are pinned to exact versions. Install the pnpm version from `packageManager` (for example `pnpm self-update 12.5.1`). With any other version, pnpm tries to download the pinned one, and every `pnpm` command fails in the agent sandbox. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` sets a patched minimum version for each supported Node.js line (`engines.node`), and both package managers refuse to install on an older version. Raise these minimums when Node.js publishes a security release. In CI, set `check-latest: true` on `actions/setup-node`, because runner images can lag behind a security release.
