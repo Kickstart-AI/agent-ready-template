@@ -7,6 +7,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Pull request: [#9 - Add agent tool permission settings](https://github.com/Kickstart-AI/agent-ready-template/pull/9)
 
+The Claude Code settings were tested with Claude Code 2.1.325.
+
 ### Security
 - Add Claude Code permission rules in `.claude/settings.json`:
   - Deny reading secrets (`.env` files, keys, cloud and SSH credentials), destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
@@ -18,6 +20,9 @@ Pull request: [#9 - Add agent tool permission settings](https://github.com/Kicks
 
 ### Added
 - Add a "Security and permissions" section to the README. It explains how each agent enforces its rules, the limits of command matching, and that the allowed hosts can serve source code and packages.
+- Keep the uv cache and the pnpm store and cache in the project directory, so sandboxed agents can use them.
+- Instruct the `get-started` skill to ask the developer to install dependencies, because the agent sandbox blocks package downloads.
+- Add lockfiles to both templates (`uv.lock`, `pnpm-lock.yaml`). CI checks that they match the manifests.
 
 ## [0.3.0] - 2026-11-16
 
