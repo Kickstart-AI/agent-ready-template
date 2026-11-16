@@ -64,7 +64,20 @@
       "Bash(scp *)",
       "Bash(nc *)",
       "Bash(printenv *)",
-      "Bash(env)"
+      "Bash(env)",
+      "Edit(/.claude)",
+      "Edit(/.claude/**)",
+      "Edit(/.codex)",
+      "Edit(/.codex/**)",
+      "Edit(~/.claude/settings.json)",
+      "Edit(~/.claude/settings.local.json)",
+      "Edit(~/.codex/config.toml)",
+      "Edit(~/.codex/rules)",
+      "Edit(~/.codex/hooks.json)",
+      "Edit(~/.codex/requirements.toml)",
+      "Edit(~/.codex/managed_config.toml)",
+      "Edit(~/.codex/*.config.toml)",
+      "Edit(~/.codex/rules/**)"
     ],
     "ask": [
       "Bash(npm install *)",
@@ -108,12 +121,25 @@
     "autoAllowBashIfSandboxed": false,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": ["git fetch", "git pull"],
+    "excludedCommands": [
+      "git fetch",
+      "git pull"
+    ],
     "network": {
-      "allowedDomains": ["api.github.com", "registry.npmjs.org", "pypi.org"]
+      "allowedDomains": [
+        "api.github.com",
+        "registry.npmjs.org",
+        "pypi.org"
+      ]
     },
     "filesystem": {
-      "denyWrite": ["./.git/config", "./.git/config.worktree", "./.git/hooks"]
+      "denyWrite": [
+        "./.git/config",
+        "./.git/config.worktree",
+        "./.git/hooks",
+        "./.claude",
+        "./.codex"
+      ]
     }
   }
 }
