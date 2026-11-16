@@ -61,36 +61,3 @@ prefix_rule(pattern = ["git", "branch", "-D"], decision = "forbidden")
 prefix_rule(pattern = ["rm"], decision = "forbidden")
 prefix_rule(pattern = ["docker"], decision = "forbidden")
 prefix_rule(pattern = ["terraform"], decision = "forbidden")
-
-# Only these fixed review invocations can run outside the Codex sandbox.
-# The final -- prevents the prompt from overriding the restrictions.
-prefix_rule(
-    pattern = [
-        "claude", "--safe-mode", "--print", "--permission-mode", "plan",
-        "--tools", "Read,Glob,Grep", "--disallowedTools", "mcp__*", "--",
-    ],
-    decision = "allow",
-    justification = "Run Claude reviews with read/search tools and no customizations or MCP tools.",
-    match = ["claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' -- 'Review the code'"],
-    not_match = [
-        "claude --print 'Edit the code'",
-        "claude --dangerously-skip-permissions --print 'Edit the code'",
-        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --tools Bash -- 'Edit the code'",
-    ],
-)
-
-prefix_rule(
-    pattern = [
-        "claude", "--safe-mode", "--print", "--permission-mode", "plan",
-        "--tools", "Read,Glob,Grep", "--disallowedTools", "mcp__*",
-        "--model", "claude-opus-5-5", "--",
-    ],
-    decision = "allow",
-    justification = "Run Claude Opus 5.5 reviews with read/search tools and no customizations or MCP tools.",
-    match = ["claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 -- 'Review the code'"],
-    not_match = [
-        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model other-model -- 'Review the code'",
-        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 --tools Bash -- 'Edit the code'",
-        "claude --safe-mode --print --permission-mode plan --tools Read,Glob,Grep --disallowedTools 'mcp__*' --model claude-opus-5-5 --dangerously-skip-permissions -- 'Edit the code'",
-    ],
-)
