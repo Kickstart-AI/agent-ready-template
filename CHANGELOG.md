@@ -25,7 +25,7 @@ The Claude Code settings were tested with Claude Code 2.1.325.
 - Put the Python and pnpm bootstrap procedures in the `get-started` skill, with short links from the README. Developer-run setup populates project-local caches and runs the checks before agent validation. Explain that network and command restrictions do not guarantee installation is impossible.
 - Explain that blocking `env` and `printenv` does not protect inherited secrets from shell expansion or other programs.
 - Tell agents in `AGENTS.md` not to work around the sandbox and deny rules.
-- Instruct the `get-started` skill to copy the dependency bootstrap into the project README and to ask the developer to remove the skill, because the sandbox blocks the agent from deleting it.
+- Instruct the `get-started` skill to copy the dependency bootstrap into the project README and to ask the developer to remove the skill, because the agent restrictions block the agent from deleting it.
 - Add lockfiles to both templates (`uv.lock`, `pnpm-lock.yaml`). CI checks that they match the manifests. Dependabot updates them; its Python entry uses the `uv` ecosystem instead of `pip`.
 - Pin the Python check tools that pre-commit runs through `uvx` to exact versions: `ruff` 0.17.1, `ty` 0.0.89, `vulture` 2.16, `pylint` 4.1.3, `deptry` 0.25.1, `detect-secrets` 1.5.0, and `pre-commit` 4.7.0.
 

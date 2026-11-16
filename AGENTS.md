@@ -16,7 +16,6 @@
   - Modifying access control, permissions, or authentication logic
   - Running scripts that affect multiple systems or environments
   - Publishing packages or deploying to production
-  - Using custom ad-hoc scripts to bypass any tool or environment restrictions
 - When installing or updating dependencies, verify before installation that the selected version has no known
   supply-chain compromise reports or critical CVEs.
 - Always pin dependencies to exact versions in manifests or lockfiles instead of using floating version ranges.

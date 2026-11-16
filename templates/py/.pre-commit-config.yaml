@@ -1,5 +1,5 @@
 # Pre-commit template for Python agent-readiness baseline.
-# Copy to `.pre-commit-config.yaml`, then follow the Python bootstrap in .agents/skills/get-started/SKILL.md.
+# Copy to `.pre-commit-config.yaml`, then follow the dependency bootstrap in README.md.
 minimum_pre_commit_version: "4.0.0"
 
 repos:
