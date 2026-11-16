@@ -15,14 +15,18 @@ The Claude Code settings were tested with Claude Code 2.1.325.
   - Ask before dependency installs, commits, and other commands that change local state.
   - Allow the TypeScript template checks (`pnpm validate`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check`) without a prompt.
 - Enable the Claude Code Bash sandbox. Sandboxed commands still follow the permission mode, cannot run again outside the sandbox, and can reach only `api.github.com`, `registry.npmjs.org`, and `pypi.org` without approval. Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Only plain `git fetch` and `git pull`, without arguments, run outside the sandbox, so they can use SSH.
-- Add Codex settings in `.codex/config.toml`: the `workspace-write` sandbox, network access only through a proxy restricted to the same three hosts, and rejection of sandbox escalation requests.
+- Add Codex settings in `.codex/config.toml`: a permission profile extending `:workspace`, network access only through a proxy restricted to the same three hosts, and rejection of sandbox escalation requests.
+- Make `.claude/` and `.codex/` read-only in both agent sandboxes, with Edit deny rules for Claude file tools. Claude Edit deny rules also protect the agent configs in the home folder. Agents can still edit skills in `.agents/`. Exclude the agent folders from the pre-commit hook that always opens files for writing.
 - Add Codex command rules in `.codex/rules/default.rules`. They forbid the same commands that Claude Code denies or asks about, because Codex automatic review can approve `prompt` rules.
 
 ### Added
 - Add a "Security and permissions" section to the README. It explains how each agent enforces its rules, the limits of command matching, and that the allowed hosts can serve source code and packages.
-- Keep all package caches in the project's `.cache/` folder, so sandboxed agents can use them: the uv cache and the pnpm store and cache through the template configs, and the `uvx` tools and pre-commit through the agent settings (`UV_CACHE_DIR`, `UV_TOOL_DIR`, `PRE_COMMIT_HOME`), because these tools ignore the project configuration. ESLint, pylint, and vulture exclude `.cache/`.
-- Instruct the `get-started` skill to ask the developer to install dependencies, because the agent sandbox blocks package downloads.
-- Add lockfiles to both templates (`uv.lock`, `pnpm-lock.yaml`). CI checks that they match the manifests, and Dependabot updates them (the Python entry now uses the `uv` ecosystem).
+- Keep all package caches in the project's `.cache/` folder, so sandboxed agents can use them: the uv cache and the pnpm store and cache through the template configs, and the `uvx` tools and pre-commit through the agent settings (`UV_CACHE_DIR`, `UV_TOOL_DIR`, `PRE_COMMIT_HOME`), because these tools ignore the project configuration. ESLint, pylint, and vulture exclude `.cache/`. `AGENTS.md` tells agents to run commands from the repository root, so they find these caches.
+- Put the Python and pnpm bootstrap procedures in the `get-started` skill, with short links from the README. Developer-run setup populates project-local caches and runs the checks before agent validation. Explain that network and command restrictions do not guarantee installation is impossible.
+- Explain that blocking `env` and `printenv` does not protect inherited secrets from shell expansion or other programs.
+- Tell agents in `AGENTS.md` not to work around the sandbox and deny rules.
+- Instruct the `get-started` skill to copy the dependency bootstrap into the project README and to ask the developer to remove the skill, because the sandbox blocks the agent from deleting it.
+- Add lockfiles to both templates (`uv.lock`, `pnpm-lock.yaml`). CI checks that they match the manifests. Dependabot updates them; its Python entry uses the `uv` ecosystem instead of `pip`.
 - Pin the Python check tools that pre-commit runs through `uvx` to exact versions: `ruff` 0.17.1, `ty` 0.0.89, `vulture` 2.16, `pylint` 4.1.3, `deptry` 0.25.1, `detect-secrets` 1.5.0, and `pre-commit` 4.7.0.
 
 ## [0.3.0] - 2026-11-16

@@ -1,7 +1,5 @@
 # Pre-commit template for Python agent-readiness baseline.
-# Copy to `.pre-commit-config.yaml` to activate, then run:
-#   uvx pre-commit@4.7.0 install
-#   uvx pre-commit@4.7.0 run --all-files
+# Copy to `.pre-commit-config.yaml`, then follow the Python bootstrap in .agents/skills/get-started/SKILL.md.
 minimum_pre_commit_version: "4.0.0"
 
 repos:
@@ -12,8 +10,8 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=500"]
       - id: end-of-file-fixer
-        # The hook opens files for writing; the Claude Code sandbox blocks this for agent settings and skills.
-        exclude: ^\.(claude|agents)/
+        # The hook opens every file for writing, including unchanged files in protected agent folders.
+        exclude: ^\.(claude|codex|agents)/
       - id: trailing-whitespace
       - id: check-yaml
         # pnpm-lock.yaml contains several YAML documents.
