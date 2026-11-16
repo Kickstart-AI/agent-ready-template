@@ -38,7 +38,7 @@ respect-type-ignore-comments = true
 [tool.uv]
 required-version = ">=0.13.5"
 # Keep the cache in the project, so sandboxed agents can write it.
-cache-dir = ".uv-cache"
+cache-dir = ".cache/uv"
 exclude-newer = "30 days"
 # certifi releases are trust-store fixes. Keep this short delay permanently.
 exclude-newer-package = { certifi = "2 days" }

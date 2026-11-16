@@ -20,9 +20,10 @@ The Claude Code settings were tested with Claude Code 2.1.325.
 
 ### Added
 - Add a "Security and permissions" section to the README. It explains how each agent enforces its rules, the limits of command matching, and that the allowed hosts can serve source code and packages.
-- Keep the uv cache and the pnpm store and cache in the project directory, so sandboxed agents can use them.
+- Keep all package caches in the project's `.cache/` folder, so sandboxed agents can use them: the uv cache and the pnpm store and cache through the template configs, and the `uvx` tools and pre-commit through the agent settings (`UV_CACHE_DIR`, `UV_TOOL_DIR`, `PRE_COMMIT_HOME`), because these tools ignore the project configuration. ESLint, pylint, and vulture exclude `.cache/`.
 - Instruct the `get-started` skill to ask the developer to install dependencies, because the agent sandbox blocks package downloads.
-- Add lockfiles to both templates (`uv.lock`, `pnpm-lock.yaml`). CI checks that they match the manifests.
+- Add lockfiles to both templates (`uv.lock`, `pnpm-lock.yaml`). CI checks that they match the manifests, and Dependabot updates them (the Python entry now uses the `uv` ecosystem).
+- Pin the Python check tools that pre-commit runs through `uvx` to exact versions: `ruff` 0.17.1, `ty` 0.0.89, `vulture` 2.16, `pylint` 4.1.3, `deptry` 0.25.1, `detect-secrets` 1.5.0, and `pre-commit` 4.7.0.
 
 ## [0.3.0] - 2026-11-16
 
