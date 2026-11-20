@@ -52,7 +52,15 @@ The project folders `.claude/` and `.codex/` are read-only during sandboxed agen
 
 ### Claude Code
 
-`.claude/settings.json` denies access to secrets, destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools. It requires approval for dependency installation, commits, and other commands that change local state.
+`.claude/settings.json` denies access to secrets, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools. It requires approval for dependency installation, recursive deletes (`rm -r`, `find -delete`, `rsync --delete`, `rimraf`, `git rm -r`), and git commands that change the working tree or local history.
+
+The settings limit the effect of errors instead of trying to block every risky command. Changes inside the repository can be restored with git, so the agent may edit files and delete single files there. Changes outside the repository are blocked:
+
+- `defaultMode: "acceptEdits"` lets Claude edit files and run common file commands, such as `mkdir`, `mv`, and a plain `rm`, inside the project without asking.
+- `blockWritesOutsideWorkingDirectories: true` makes the `Write`, `Edit`, and `NotebookEdit` tools refuse paths outside the project in every mode. The sandbox does the same for Bash commands.
+- `disableBypassPermissionsMode: "disable"` prevents bypass mode (`--dangerously-skip-permissions`) in this project.
+
+Commit often. Uncommitted and untracked files are not protected by git.
 
 Claude Code checks permission rules in this order, and the first match wins:
 
@@ -84,7 +92,7 @@ The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edi
 
 ### Codex
 
-The project selects the `agent-workspace` permission profile, which extends `:workspace`. Codex can edit ordinary repository files and run commands within the sandbox; `.claude/` and `.codex/` are read-only, and `.agents/` is writable, so Codex can maintain skills. The inherited protections for `.git/` and `.aws/` remain active. Command network access uses the domain-restricted proxy described below. The rules in `.codex/rules/default.rules` block selected command prefixes, including dependency installation and updates, commits, rebases, file removal, Docker, and Terraform. See the rule file for the full list.
+The project selects the `agent-workspace` permission profile, which extends `:workspace`. Codex can edit ordinary repository files and run commands within the sandbox; `.claude/` and `.codex/` are read-only, and `.agents/` is writable, so Codex can maintain skills. The inherited protections for `.git/` and `.aws/` remain active. Command network access uses the domain-restricted proxy described below. The rules in `.codex/rules/default.rules` block selected command prefixes, including dependency installation and updates, commits, rebases, recursive file removal, Docker, and Terraform. A plain `rm` is allowed, as in Claude. Codex rules match only fixed prefixes, so they cannot catch `find -delete` or recursive flags in other positions, and they forbid all `rsync` to catch `--delete`. See the rule file for the full list.
 
 The config enables both `permissions.agent-workspace.network.enabled` and `features.network_proxy.enabled`. The proxy allows only these destinations:
 

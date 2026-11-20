@@ -7,12 +7,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Pull request: [#9 - Add agent tool permission settings](https://github.com/Kickstart-AI/agent-ready-template/pull/9)
 
-The Claude Code settings were tested with Claude Code 2.1.325.
+The settings were tested with
+- Claude Code 2.1.325.
+- Claude Desktop 6.6395.1 (8fc566) 2026-11-18T17:19:06.000Z
+- Codex CLI 0.169.0
+- ChatGPT Desktop 26.1111.21308
 
 ### Security
 - Add Claude Code permission rules in `.claude/settings.json`:
-  - Deny reading secrets (`.env` files, keys, cloud and SSH credentials), destructive commands, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
-  - Ask before dependency installs, commits, and other commands that change local state.
+  - Deny reading secrets (`.env` files, keys, cloud and SSH credentials), git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
+  - Ask before dependency installs, recursive deletes, and git commands that change the working tree or local history. Allow single-file `rm` inside the project.
+  - Start in `acceptEdits` mode, refuse file-tool writes outside the project (`blockWritesOutsideWorkingDirectories`), and disable bypass mode (`disableBypassPermissionsMode`).
   - Allow the TypeScript template checks (`pnpm validate`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check`) without a prompt.
 - Enable the Claude Code Bash sandbox. Sandboxed commands still follow the permission mode, cannot run again outside the sandbox, and can reach only `api.github.com`, `registry.npmjs.org`, and `pypi.org` without approval. Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Only plain `git fetch` and `git pull`, without arguments, run outside the sandbox, so they can use SSH.
 - Add Codex settings in `.codex/config.toml`: a permission profile extending `:workspace`, network access only through a proxy restricted to the same three hosts, and rejection of sandbox escalation requests.

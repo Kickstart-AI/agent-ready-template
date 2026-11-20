@@ -18,7 +18,7 @@ prefix_rule(pattern = [["npm", "pnpm", "uv"], "publish"], decision = "forbidden"
 prefix_rule(pattern = ["twine", "upload"], decision = "forbidden")
 prefix_rule(pattern = [["curl", "wget", "ssh", "scp", "nc", "printenv", "env"]], decision = "forbidden")
 
-# Claude ask. The rm and terraform rules also cover the Claude deny rules for rm -rf and terraform apply.
+# Claude ask. The terraform rule also covers the Claude deny rules for terraform apply and destroy.
 prefix_rule(pattern = ["npm", ["install", "i", "ci", "add", "update"]], decision = "forbidden")
 prefix_rule(pattern = ["npx"], decision = "forbidden")
 prefix_rule(pattern = ["pnpm", ["install", "i", "add", "update", "dlx"]], decision = "forbidden")
@@ -32,4 +32,10 @@ prefix_rule(pattern = ["git", ["commit", "rebase", "restore"]], decision = "forb
 prefix_rule(pattern = ["git", "checkout", ["--", "."]], decision = "forbidden")
 prefix_rule(pattern = ["git", "branch", "-D"], decision = "forbidden")
 prefix_rule(pattern = ["git", "stash", "drop"], decision = "forbidden")
-prefix_rule(pattern = [["rm", "docker", "terraform"]], decision = "forbidden")
+prefix_rule(pattern = [["docker", "terraform"]], decision = "forbidden")
+prefix_rule(pattern = ["rm", ["-r", "-R", "-rf", "-fr", "-Rf", "-fR", "-rv", "-rfv", "-vrf", "--recursive"]], decision = "forbidden")
+prefix_rule(pattern = ["rm", "-f", ["-r", "-R", "--recursive"]], decision = "forbidden")
+prefix_rule(pattern = ["rsync"], decision = "forbidden")
+prefix_rule(pattern = [["rimraf"]], decision = "forbidden")
+prefix_rule(pattern = ["pnpm", "exec", "rimraf"], decision = "forbidden")
+prefix_rule(pattern = ["git", "rm", "-r"], decision = "forbidden")
