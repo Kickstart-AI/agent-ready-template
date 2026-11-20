@@ -18,8 +18,12 @@ jobs:
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
           working-directory: templates/py
+          # The template has no dependencies, so the uv cache can stay empty.
+          ignore-nothing-to-cache: true
+      - run: uv lock --check
+        working-directory: templates/py
       # deptry needs a [project] section, which only exists after get-started.
-      - run: uvx pre-commit@4.6.2 run --all-files --show-diff-on-failure --config templates/py/.pre-commit-config.yaml
+      - run: uvx pre-commit@4.7.0 run --all-files --show-diff-on-failure --config templates/py/.pre-commit-config.yaml
         env:
           SKIP: deptry
 
@@ -39,7 +43,7 @@ jobs:
         with:
           node-version: 26
           check-latest: true
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       # The template has no source files; add one so tsc and knip have input.
       - run: |
           mkdir -p src

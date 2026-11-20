@@ -24,6 +24,7 @@ dist/
 # Virtual environments
 .venv/
 venv/
+.cache/
 
 # Editors and OS files
 .idea/
