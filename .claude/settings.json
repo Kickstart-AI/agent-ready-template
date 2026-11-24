@@ -16,6 +16,9 @@
       "Bash(pnpm format:check)"
     ],
     "deny": [
+      "Read(~/.codex/auth.json)",
+      "Read(~/.git-credentials)",
+      "Bash(security *)",
       "Read(//**/.env)",
       "Read(//**/.env.*)",
       "Read(./**/*.pem)",
@@ -117,7 +120,7 @@
       "Bash(rm * -*r*)",
       "Bash(rm * -*R*)",
       "Bash(rm *--recursive*)",
-            "Bash(find * -delete*)",
+      "Bash(find * -delete*)",
       "Bash(find * -exec rm *)",
       "Bash(find * -execdir rm *)",
       "Bash(rsync *--delete*)",
@@ -145,6 +148,7 @@
       ]
     },
     "filesystem": {
+      "denyRead": ["~/.codex/auth.json", "~/.git-credentials"],
       "denyWrite": [
         "./.git/config",
         "./.git/config.worktree",

@@ -18,3 +18,7 @@ extends = ":workspace"
 [permissions.agent-workspace.network]
 enabled = true
 domains = { "api.github.com" = "allow", "registry.npmjs.org" = "allow", "pypi.org" = "allow" }
+
+[permissions.agent-workspace.filesystem]
+"~/.claude/.credentials.json" = "deny"
+"~/.git-credentials" = "deny"

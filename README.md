@@ -126,6 +126,10 @@ These rules do not make all other commands safe. They match literal command pref
 
 ### Environment secrets
 
+Claude's `Read` deny rules and Bash sandbox `filesystem.denyRead` block `~/.codex/auth.json` and `~/.git-credentials`. The Codex `agent-workspace` profile denies access to `~/.claude/.credentials.json` and `~/.git-credentials`. Trust the project to load the repository settings. For other projects, apply the corresponding rules in each agent's user settings.
+
+These rules cover the named files. On macOS, Claude normally stores its login in Keychain and can fall back to the credential file. Keychain access, Git credential helpers, and commands authorized outside the sandbox have separate controls. See [Claude credential storage](https://code.claude.com/docs/en/authentication#credential-management).
+
 The `env` and `printenv` rules do not prevent access to inherited environment variables. For example, `echo "$OPENAI_API_KEY"` can print an inherited key: the shell expands the variable before it runs `echo`, so neither blocked command is used. Other commands and programs can also read environment variables. Secret-file read restrictions do not protect values already present in the process environment. Do not expose credentials to an agent process unless the task needs them; these command rules do not isolate environment secrets.
 
 ## Content

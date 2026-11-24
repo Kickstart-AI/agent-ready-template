@@ -17,6 +17,7 @@ prefix_rule(pattern = [["aws", "gcloud", "az", "gsutil", "bq", "vercel"]], decis
 prefix_rule(pattern = [["npm", "pnpm", "uv"], "publish"], decision = "forbidden")
 prefix_rule(pattern = ["twine", "upload"], decision = "forbidden")
 prefix_rule(pattern = [["curl", "wget", "ssh", "scp", "nc", "printenv", "env"]], decision = "forbidden")
+prefix_rule(pattern = ["security"], decision = "forbidden")
 
 # Claude ask. The terraform rule also covers the Claude deny rules for terraform apply and destroy.
 prefix_rule(pattern = ["npm", ["install", "i", "ci", "add", "update"]], decision = "forbidden")

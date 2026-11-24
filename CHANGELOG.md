@@ -14,6 +14,8 @@ The settings were tested with
 - ChatGPT Desktop 26.1111.21308
 
 ### Security
+- Block sandboxed reads of the other agent’s file-backed login and Git’s default home credential file. Claude also denies reads through its file tools.
+- Deny the macOS `security` CLI in Claude and Codex, so that agents cannot query the keychain. Programs that call the keychain API directly are not blocked.
 - Add Claude Code permission rules in `.claude/settings.json`:
   - Deny reading secrets (`.env` files, keys, cloud and SSH credentials), git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools.
   - Ask before dependency installs, recursive deletes, and git commands that change the working tree or local history. Allow single-file `rm` inside the project.
