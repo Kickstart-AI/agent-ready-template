@@ -52,7 +52,8 @@
 - For data-heavy or ML projects, prefer end-to-end and integration tests on real data. Check for data leakage.
 - Do not aim for a coverage percentage. High coverage is easy to get and does not show that the tests are useful.
 - Do not write tests that only assert configuration values.
-
+- Do not test the functionality of external libraries.
+- Do not write tests that assert something is absent.
 ## Error Handling & Debugging
 - No need for excessive try-except blocks and edge case handling. Don't wrap imports in try-except blocks.
 - Use `logging` or equivalent instead of `print`. Make use of `debug`, `warning` and `error` levels in addition to `info`.
