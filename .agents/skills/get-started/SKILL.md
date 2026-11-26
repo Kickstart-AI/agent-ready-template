@@ -16,6 +16,7 @@ Ask targeted questions interview-style, one question at a time, to find out what
 - What programming language do they want to use?
 - Do they have already an idea about the architecture / stack of the project?
 - Are there any coding conventions they want to follow?
+- Where do the tickets or issues live (for example Jira or GitHub Issues)?
 - What autonomy level do they want the agent to follow? Do they want the agent to be fully independent and autonomous, or do they want the agent to check in frequently with the developer?
 - ... (any other question that helps you create an implementation plan and learn about the developer and the project)
 
@@ -28,6 +29,9 @@ Keep open follow-up items in a `## TODOs` section at the bottom of that plan fil
 Review `AGENTS.md` with the developer and customize it to their preferences before scaffolding implementation details.
 Language, coding and architecture guidelines should be in line with the plan.
 Communication and approach should be in line with the developer / team preference.
+Change the wording of rules that depend on the project type (for example, the UI and data/ML rules in `## Testing`), and remove the rules that do not apply.
+Write where the tickets or issues live into `AGENTS.md`.
+Offer to create focused docs (for example `docs/ARCHITECTURE.md` or `docs/CONVENTIONS.md`). If the developer agrees, link them from `AGENTS.md` and add a rule to update them when the architecture or conventions change.
 Keep it minimal and specific to this repo.
 
 ## 4. Execution

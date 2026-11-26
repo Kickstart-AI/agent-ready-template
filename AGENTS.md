@@ -38,12 +38,22 @@
 - At the start of a session, check the temporary release-age exemptions. If an exempted fixed version is now older than the delay, remove the exemption.
 - Do not rely on your internal knowledge about APIs, libraries, and tools. Assume that it might be outdated. Use web search and web fetch to retrieve relevant documentation.
 - Implement the basic happy path of any functionality or feature first. Only after confirmation from the user, implement the edge cases.
-- Only implement features and functionality that the user asked for.
+- Only implement features and functionality that the user asked for. Do not change files or features outside the scope of the ticket.
 - Use red/green TDD.
 - If stuck after 2 failed implementation attempts, stop and present a blocker summary with concrete next options.
 - Before handoff, run the smallest relevant tests/lint for touched code and report pass/fail explicitly.
 - Self-improvement: If the user corrects a mistake or gives feedback, suggest a change to the `AGENTS.md` to prevent the same mistake from happening again.
 
+## Testing
+- Test behavior and functionality, not implementation.
+- Use real and representative data and components. Avoid mocks and monkeypatching, except when the real component would make the tests too slow.
+- When you find a bug, first write a regression test that reproduces it, then fix it.
+- For UI changes, test manually before you ask for a review. Do not leave the testing to the reviewer.
+- For data-heavy or ML projects, prefer end-to-end and integration tests on real data. Check for data leakage.
+- Do not aim for a coverage percentage. High coverage is easy to get and does not show that the tests are useful.
+- Do not write tests that only assert configuration values.
+- Do not test the functionality of external libraries.
+- Do not write tests that assert something is absent.
 ## Error Handling & Debugging
 - No need for excessive try-except blocks and edge case handling. Don't wrap imports in try-except blocks.
 - Use `logging` or equivalent instead of `print`. Make use of `debug`, `warning` and `error` levels in addition to `info`.
@@ -52,6 +62,7 @@
 
 ## Documentation & Memory
 - Avoid overdocumenting (e.g. README.md in every folder, excessive comments in the code).
+- Use comments only to explain why, for example the reason for a hard-coded value.
 - Keep `CHANGELOG.md` up to date. Record each user-visible change under the next version, in the same change that makes it.
   When you release a version, update the version in `pyproject.toml` or `package.json` to match.
 - Keep session-spanning plans in state-specific folders:
@@ -59,7 +70,10 @@
   - `docs/plans/pending/YYYY-MM-DD-{plan-name}.md` for approved plans that are not currently active
   - `docs/plans/completed/YYYY-MM-DD-{plan-name}.md` for finished plans
 - Move the whole plan file between these folders when its state changes.
+- Do not change plans in `docs/plans/completed/`. When new work replaces a completed plan, record this in `docs/decisions/`.
 - Use `docs/decisions/YYYY-MM-DD.md` to record decisions you made and find past decisions and reasoning behind them.
+  Keep each entry to a few lines about what changed and why.
+- Link each plan and decision entry to its ticket or issue.
 - Keep TODOs at the bottom of each plan file (for example, in a `## TODOs` section). Do not use a separate TODO file.
 - Use Markdown checkboxes to show the status:
   - [ ] pending todo
