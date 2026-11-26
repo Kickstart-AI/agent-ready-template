@@ -8,6 +8,7 @@
 - No need for backward compatibility or forward compatibility.
 
 ## Security
+- This project runs agents in a sandbox with command deny rules (see `.claude/settings.json`, `.codex/`). Do not try to work around them, for example with wrappers, other paths, or scripts. If a restriction blocks the task, stop and tell the user which one.
 - For high-risk operations, make sure to always stop and confirm with the user before execution. Examples:
   - Irreversible removals like `rm -rf`
   - Changing infrastructure like `terraform apply`
@@ -15,7 +16,6 @@
   - Modifying access control, permissions, or authentication logic
   - Running scripts that affect multiple systems or environments
   - Publishing packages or deploying to production
-  - Using custom ad-hoc scripts to bypass any tool or environment restrictions
 - When installing or updating dependencies, verify before installation that the selected version has no known
   supply-chain compromise reports or critical CVEs.
 - Always pin dependencies to exact versions in manifests or lockfiles instead of using floating version ranges.
@@ -42,6 +42,7 @@
 - Use red/green TDD.
 - If stuck after 2 failed implementation attempts, stop and present a blocker summary with concrete next options.
 - Before handoff, run the smallest relevant tests/lint for touched code and report pass/fail explicitly.
+- Run commands from the repository root. Do not use `cd`. Use the tool options for other directories (for example `uv --directory`, `pnpm --dir`, `git -C`). The agent settings set the cache paths relative to the current directory, so a command in a subdirectory does not find the caches in `.cache/`.
 - Self-improvement: If the user corrects a mistake or gives feedback, suggest a change to the `AGENTS.md` to prevent the same mistake from happening again.
 
 ## Testing

@@ -5,7 +5,7 @@
 
 # Dependencies
 node_modules/
-.pnpm-store/
+.cache/
 
 # Build outputs
 dist/

@@ -4,9 +4,15 @@
 - [How to use this repository](#how-to-use-this-repository)
   - [As a reference](#as-a-reference)
   - [As a starting point for your own project](#as-a-starting-point-for-your-own-project)
+- [Security and permissions](#security-and-permissions)
+  - [Claude Code](#claude-security)
+  - [Codex](#codex-security)
+  - [Environment secrets](#environment-secrets)
 - [Content](#content)
   - [`AGENTS.md`](#agentsmd)
   - [`CLAUDE.md`](#claudemd)
+  - [`.claude/settings.json`](#claudesettingsjson)
+  - [`.codex/`](#codex)
   - [`.agents/skills/`](#agentsskills)
   - [`docs/`](#docs)
   - [`templates/`](#templates)
@@ -15,8 +21,6 @@
 
 This is a template repository for **any type of project** that you want to build using coding agents.
 It contains a minimal set of agent instructions and a project structure that works well with agents like OpenAI Codex, Claude Code, Factory Droid, and others.
-
-The idea is that you clone this repo, start your coding agent, and let it help you set up the rest.
 
 ## How to use this repository
 
@@ -36,7 +40,97 @@ Browse the `AGENTS.md`, the skill files and templates to see how agent instructi
 2. Clone this repository and open it in your terminal.
 3. Start your coding agent and prompt it with **"Help me get started!"**
 
-The `get-started` skill will kick in and guide you through setting up your project interactively.
+The [`get-started` skill](#agentsskills) guides the project setup.
+
+## Security and permissions
+
+Instructions in `AGENTS.md` are only requests. Agents can ignore them, especially in long sessions. This template therefore also uses settings that the agent tools enforce. Each agent has its own settings file, and the rules do not transfer between agents.
+
+The project folders `.claude/` and `.codex/` are read-only during sandboxed agent work. Claude also denies edits through its built-in file tools. Change agent settings yourself in a separate editor or terminal. Agents can edit skills in `.agents/`, so that they can maintain them. Claude Code still blocks Bash commands from writing skill files, so Claude uses its file tools for skills. These restrictions do not protect inherited environment secrets, and commands explicitly allowed outside the sandbox are outside this filesystem boundary. Review personal and managed exceptions as well as project settings.
+
+<a id="claude-security"></a>
+
+### Claude Code
+
+`.claude/settings.json` denies access to secrets, git remote actions, infrastructure changes, cloud CLIs, publishing, and network tools. It requires approval for dependency installation, recursive deletes (`rm -r`, `find -delete`, `rsync --delete`, `rimraf`, `git rm -r`), and git commands that change the working tree or local history.
+
+The settings limit the effect of errors instead of trying to block every risky command. Changes inside the repository can be restored with git, so the agent may edit files and delete single files there. Changes outside the repository are blocked:
+
+- `defaultMode: "acceptEdits"` lets Claude edit files and run common file commands, such as `mkdir`, `mv`, and a plain `rm`, inside the project without asking.
+- `blockWritesOutsideWorkingDirectories: true` makes the `Write`, `Edit`, and `NotebookEdit` tools refuse paths outside the project in every mode. The sandbox does the same for Bash commands.
+- `disableBypassPermissionsMode: "disable"` prevents bypass mode (`--dangerously-skip-permissions`) in this project.
+
+Commit often. Uncommitted and untracked files are not protected by git.
+
+Claude Code checks permission rules in this order, and the first match wins:
+
+1. **`deny`**: Claude Code blocks the command. It does not ask you, in any permission mode, including auto mode. A matching `allow` rule or an earlier "Yes, and don't ask again" does not override it.
+2. **`ask`**: Claude Code always asks you, also in auto mode. The auto mode classifier cannot approve these commands.
+3. **`allow`**: Claude Code runs the command without asking.
+
+Other commands follow the permission mode. Built-in read-only commands such as `ls` and `cat` run without asking. Other Bash commands run inside the sandbox. Because `autoAllowBashIfSandboxed` is `false`, they follow the mode like file edits and commands outside the sandbox: in manual mode Claude Code asks you, and in auto mode a classifier decides. The `allow` rules let the TypeScript template checks (`pnpm validate`, `pnpm lint`, `pnpm typecheck`, `pnpm format:check`) run without asking. These scripts come from `package.json`, so check changes to it in the diff. Codex has no matching rules, because Codex `allow` rules run commands outside its sandbox.
+
+Put personal overrides in `.claude/settings.local.json`. "Yes, and don't ask again" also saves an `allow` rule there. Do not choose it for generic tools such as `sed`, `python3`, or `bash`: a rule like `Bash(sed *)` lets every later `sed` command run without asking. These cannot override a `deny` rule, because Claude Code merges the rules from all files. To run a denied command, run it yourself in a separate terminal, or remove the rule from `.claude/settings.json`.
+
+**Rules match the command text only.** `Bash(git push *)` blocks `git push origin main`, but not `git -C . push` or `bash -c 'git push'`. The rules stop the usual form of a command. They are not a security boundary.
+
+**The sandbox is the security boundary.** With `sandbox.enabled`, the operating system limits every Bash command, whatever its text:
+
+- Commands can write only inside the project and temporary directories, except for write-denied paths. Both `Edit` deny rules and `sandbox.filesystem.denyWrite` protect `.claude/` and `.codex/`. Claude's file tools do not run in the sandbox, so `Edit` deny rules also protect the agent configs in your home folder (`~/.claude/settings*.json`, `~/.codex/config.toml`, `~/.codex/rules/`, and the other Codex config files).
+- Commands cannot read the paths in the `Read` deny rules.
+- Commands can reach `api.github.com`, `registry.npmjs.org`, and `pypi.org` without approval, the same hosts as the Codex proxy. Each other host needs approval: from you in manual mode, or from the classifier in auto mode. To block other hosts instead, set `sandbox.network.strictAllowlist: true` in `~/.claude/settings.json`. Claude Code reads this key only from user or managed settings. With it, Claude Code ignores `allowedDomains` from the project, so also put the allowed hosts in `~/.claude/settings.json`.
+- Run dependency installation in a separate terminal as the supported setup procedure. Some download hosts, such as `files.pythonhosted.org`, are not pre-approved, and common install commands are blocked or require approval. This is not a guarantee that agents cannot install packages. The templates and agent settings use project-local `.cache/` directories. For Python, follow the [Python bootstrap in get-started](.agents/skills/get-started/SKILL.md#python) to populate the same tool and hook caches before agent validation; `uv sync` alone does not populate them. The checks exclude `.cache/`.
+- Downloads and installs are still possible from the allowed hosts. The rules cover the usual install commands, but not every alias (npm alone has several, such as `npm in`) or a script that downloads packages itself. The rules cannot prevent installs in general. The sandbox limits what an installed package can do.
+- `allowUnsandboxedCommands: false` prevents Claude from running a failed command again outside the sandbox.
+- Sandboxed commands can still change files that run later outside the sandbox, such as `.husky/` hooks, `.pre-commit-config.yaml` and `package.json` scripts. Check these files in the diff before you commit.
+- Only plain `git fetch` and `git pull`, without arguments, are excluded from the Claude sandbox, because SSH does not work through the sandbox network proxy. Arguments are not allowed, because options such as `--upload-pack` run a program. A pull can change tracked files in `.claude/` and `.codex/`, but only to commits that already exist on the remote.
+- Sandboxed commands cannot write `.git/config`, `.git/config.worktree`, or `.git/hooks`. Git runs commands from these files, for example `core.sshCommand`, and `git fetch` and `git pull` run outside the sandbox. Settings that already point to files in the project, such as `core.hooksPath` or `include.path`, are not protected, so check `.git/config` in existing clones.
+
+The sandbox applies to Bash commands only. Claude's own file tools (`Read`, `Edit`) use the `Read` and `Edit` rules instead. For more information, see the [permissions](https://code.claude.com/docs/en/permissions) and [sandboxing](https://code.claude.com/docs/en/sandboxing) documentation.
+
+<a id="codex-security"></a>
+
+### Codex
+
+The project selects the `agent-workspace` permission profile, which extends `:workspace`. Codex can edit ordinary repository files and run commands within the sandbox; `.claude/` and `.codex/` are read-only, and `.agents/` is writable, so Codex can maintain skills. The inherited protections for `.git/` and `.aws/` remain active. Command network access uses the domain-restricted proxy described below. The rules in `.codex/rules/default.rules` block selected command prefixes, including dependency installation and updates, commits, rebases, recursive file removal, Docker, and Terraform. A plain `rm` is allowed, as in Claude. Codex rules match only fixed prefixes, so they cannot catch `find -delete` or recursive flags in other positions, and they forbid all `rsync` to catch `--delete`. See the rule file for the full list.
+
+The config enables both `permissions.agent-workspace.network.enabled` and `features.network_proxy.enabled`. The proxy allows only these destinations:
+
+| Domain | Intended use | Also accessible |
+| --- | --- | --- |
+| `api.github.com` | GitHub CLI queries | Repository file contents and write operations permitted by the credentials |
+| `registry.npmjs.org` | npm metadata queries | Package archives served from the same host |
+| `pypi.org` | Python metadata queries | Other endpoints on this host; the policy does not restrict URL paths or HTTP methods |
+
+Other destinations are blocked by the proxy. Keep the proxy enabled whenever command networking is enabled; network access without the proxy permits unrestricted outbound connections. Filesystem restrictions remain active. This domain policy applies to sandboxed commands and their subprocesses, not to connectors, hosted tools, or explicitly allowed commands outside the sandbox.
+
+**The allowed domains are not metadata-only or read-only services.** Any sandboxed process can contact them. In particular, allowing `registry.npmjs.org` permits package archive downloads as well as metadata queries. GitHub API access can return source code and permit writes when the credentials allow them. Use read-only credentials when that boundary is required.
+
+**These settings do not guarantee that packages cannot be downloaded or installed.** This limitation applies to both agents. Codex forbids the listed installation command forms; Claude requires approval for its listed forms. Command matching does not cover every interpreter, wrapper, or program that can download, unpack, install, or execute code. Local or cached packages can be installed without network access, and writable project directories can hold packages, environments, and executable files.
+
+The Codex proxy excludes `files.pythonhosted.org`, which normally serves PyPI package files, and `github.com`, which ordinary GitHub-based pip installs need. This blocks those normal download routes when the proxy is active, but does not prevent all code acquisition through allowed hosts or local files. The intended protection is restricted network destinations and checks on common installation commands, not a complete ban on package installation.
+
+Metadata commands can use temporary caches, for example `npm view typescript version --cache /tmp/npm-cache` or `python -m pip --cache-dir /tmp/pip-cache list --outdated`. See [Codex network isolation](https://learn.chatgpt.com/docs/agent-approvals-security#network-isolation).
+
+Permission profiles do not compose with legacy `sandbox_mode` or `sandbox_workspace_write` settings. Remove those legacy entries from loaded user and profile configs, and do not pass `--sandbox`, or they can override the selected profile. Restart Codex and select `agent-workspace` for the chat; check the effective permissions before relying on the protected folders. See the [permission profile documentation](https://learn.chatgpt.com/docs/permissions).
+
+The granular approval policy sets `sandbox_approval = false`. Ordinary requests to run outside the sandbox are rejected instead of sent to you or Auto-review. Explicit `allow` rules still permit their matching commands outside the sandbox without approval. The other approval categories remain enabled: command-rule prompts (`rules`), MCP requests (`mcp_elicitations`), additional permission requests (`request_permissions`), and skill approvals (`skill_approval`). This blocks sandbox escalation requests; it is not a blanket ban on every way to grant access. See the [approval policy reference](https://learn.chatgpt.com/docs/config-file/config-reference).
+
+**Codex cannot fetch or pull.** The proxy does not allow Git remote hosts such as `github.com`, and ordinary sandbox escalation is rejected. This template adds no `allow` rules for `git fetch` or `git pull`, because Codex rules match prefixes: `["git", "fetch"]` would also allow any arguments, including options such as `--upload-pack` that run a program outside the sandbox. Run these commands yourself in a separate terminal.
+
+**A `prompt` rule requires approval, but does not require a human to approve.** With **Approve for me** enabled (`approvals_reviewer = "auto_review"`), Codex sends these requests to its automatic reviewer. The reviewer can approve the command without asking you. With `approvals_reviewer = "user"`, eligible requests go to you instead. Codex has no documented per-command setting that forces human approval while Approve for me remains enabled.
+
+For this reason, this template uses `forbidden` for these commands instead of `prompt`. A matching command is blocked in both manual and automatic approval modes. Auto-review cannot approve it, and a matching `allow` rule does not override it. Run a needed blocked operation yourself in a separate terminal.
+
+These rules do not make all other commands safe. They match literal command prefixes, so shell wrappers, alternate executable paths, and commands run by other tools can bypass them. They do not replace the sandbox, and they do not prevent reads of `.env` files, keys, or credentials. Keep secrets outside the agent's accessible environment. Project settings are defaults that users can override; use managed requirements for enforced restrictions. The project must be trusted for its rules to load; restart Codex after changes. See the [Codex rules](https://learn.chatgpt.com/docs/agent-configuration/rules) and [Auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
+
+### Environment secrets
+
+Claude's `Read` deny rules and Bash sandbox `filesystem.denyRead` block `~/.codex/auth.json` and `~/.git-credentials`. The Codex `agent-workspace` profile denies access to `~/.claude/.credentials.json` and `~/.git-credentials`. Trust the project to load the repository settings. For other projects, apply the corresponding rules in each agent's user settings.
+
+These rules cover the named files. On macOS, Claude normally stores its login in Keychain and can fall back to the credential file. Keychain access, Git credential helpers, and commands authorized outside the sandbox have separate controls. See [Claude credential storage](https://code.claude.com/docs/en/authentication#credential-management).
+
+The `env` and `printenv` rules do not prevent access to inherited environment variables. For example, `echo "$OPENAI_API_KEY"` can print an inherited key: the shell expands the variable before it runs `echo`, so neither blocked command is used. Other commands and programs can also read environment variables. Secret-file read restrictions do not protect values already present in the process environment. Do not expose credentials to an agent process unless the task needs them; these command rules do not isolate environment secrets.
 
 ## Content
 
@@ -49,6 +143,14 @@ See [this blog post](https://kickstart.ai/news/agentic-engineering-best-practice
 ### `CLAUDE.md`
 
 A one-liner that points to `AGENTS.md`. Claude Code reads `CLAUDE.md` by default, so this redirect makes sure it picks up the same instructions as every other agent.
+
+### `.claude/settings.json`
+
+Claude Code permission rules and sandbox settings. See [Security and permissions: Claude Code](#claude-security) for the blocked operations, approval behavior, and personal overrides.
+
+### `.codex/`
+
+Codex settings in `.codex/config.toml` and command rules in `.codex/rules/default.rules`. See [Codex](#codex-security) for how the rules work.
 
 ### `.agents/skills/`
 
@@ -66,8 +168,7 @@ The `.claude/skills` directory is a symlink to `.agents/skills/`, so Claude Code
 A lightweight documentation structure for the agent (and you) to keep track of things across sessions:
 
 - `docs/decisions/` -- Record architectural or design decisions with date-stamped files (`YYYY-MM-DD.md`) so the agent can look up past reasoning.
-- `docs/plans/` -- Multi-session plans that describe larger pieces of work, organized under `active/`, `pending/`, and `completed/`.
-- `docs/plans/...` plan files also carry their own `## TODOs` sections at the bottom, so open follow-up work stays attached to the plan that produced it.
+- `docs/plans/` -- Multi-session plans organized under `active/`, `pending/`, and `completed/`. Each plan keeps its follow-up work in a `## TODOs` section at the bottom.
 
 This structure exists because agents don't have memory across sessions. Without these files, every new session starts from zero context about what was decided and what was done before.
 
@@ -84,12 +185,16 @@ It is inspired by the concept of "Agent Readiness" by Factory.AI: https://factor
 - `.pre-commit-config.yaml`
 - `.gitignore`
 - `pyproject.toml`
+- `uv.lock`
 
-Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, has a short permanent delay of 2 days instead, so certificate revocations install quickly. To let another urgent security fix through, add the package to `exclude-newer-package`.
+Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks, and secret scanning because they are fast, easy for agents to run locally. The pre-commit hooks run each tool through `uvx` with an exact version. Dependabot does not update these versions, so update them by hand, and keep the 30-day release delay. The `uv` config waits 30 days before accepting new package releases and sets a minimum `uv` version (`required-version`) that blocks releases with known vulnerabilities. Raise it when `uv` publishes a security release. `certifi`, the CA certificate bundle, has a short permanent delay of 2 days instead, so certificate revocations install quickly. To let another urgent security fix through, add the package to `exclude-newer-package`.
+
+The [Python bootstrap in get-started](.agents/skills/get-started/SKILL.md#python) installs dependencies and populates the same tool and hook caches used by the agents. Run it in a separate terminal before agent validation.
 
 #### `ts/`
 
 - `package.json`
+- `pnpm-lock.yaml`
 - `.npmrc`
 - `pnpm-workspace.yaml`
 - `.gitignore`
@@ -101,4 +206,4 @@ Use this set for Python projects. It uses `uv`, `ruff`, `ty`, pre-commit checks,
 - `.husky/pre-push`
 - `.husky/_/husky.sh`
 
-Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All direct dependencies, and pnpm itself, are pinned to exact versions. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` sets a patched minimum version for each supported Node.js line (`engines.node`), and both package managers refuse to install on an older version. Raise these minimums when Node.js publishes a security release. In CI, set `check-latest: true` on `actions/setup-node`, because runner images can lag behind a security release.
+Use this set for TypeScript projects. It uses Husky and lint-staged, while CI can still run the full validation script. ESLint, TypeScript, Knip, jscpd, and secretlint cover linting, strict typing, dead code, duplicate code, and secrets. All direct dependencies, and pnpm itself, are pinned to exact versions. The [TypeScript bootstrap in get-started](.agents/skills/get-started/SKILL.md#typescript) sets up the pinned pnpm version, dependencies, project-local caches, and validation checks. Both npm (`.npmrc`) and pnpm (`pnpm-workspace.yaml`) wait 30 days before accepting new package releases. To let an urgent security fix through, add the package to `min-release-age-exclude` in `.npmrc` and to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`. `package.json` sets a patched minimum version for each supported Node.js line (`engines.node`), and both package managers refuse to install on an older version. Raise these minimums when Node.js publishes a security release. In CI, set `check-latest: true` on `actions/setup-node`, because runner images can lag behind a security release.
